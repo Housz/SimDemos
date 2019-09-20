@@ -1,1 +1,1 @@
-{\rtf1}
+just for fun :)
