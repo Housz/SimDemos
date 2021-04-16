@@ -7,7 +7,7 @@ const HEIGHT = 800;
 const TIME_STEP = 0.1;
 const G = 10;
 
-var ball = 
+var Ball = 
 {
     x: 0,
     y: 0,
@@ -49,21 +49,21 @@ var simulation = function ()
 {
     clear_canvas();
 
-    ball.vy += TIME_STEP * G;
+    Ball.vy += TIME_STEP * G;
 
-    ball.x += TIME_STEP * ball.vx;
-    ball.y += TIME_STEP * ball.vy;
+    Ball.x += TIME_STEP * Ball.vx;
+    Ball.y += TIME_STEP * Ball.vy;
 
-    if (ball.y > mycanvas.height || ball.y < 0) 
+    if (Ball.y > mycanvas.height || Ball.y < 0) 
     {
-        ball.vy = -ball.vy;
+        Ball.vy = -Ball.vy;
     }
-    if (ball.x > mycanvas.width  || ball.x < 0) 
+    if (Ball.x > mycanvas.width  || Ball.x < 0) 
     {
-        ball.vx = -ball.vx;
+        Ball.vx = -Ball.vx;
     }
 
-    ball.draw();
+    Ball.draw();
 
 
    window.requestAnimationFrame(simulation);
