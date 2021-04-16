@@ -1,7 +1,7 @@
 var mycanvas = document.getElementById("mycanvas");
 var ctx = mycanvas.getContext("2d");
 
-const WIDTH  = 1000;
+const WIDTH  = 800;
 const HEIGHT = 800;
 
 const TIME_STEP = 0.1;
@@ -11,8 +11,9 @@ var Ball =
 {
     x: 0,
     y: 0,
-    vx: 10,
-    vy: 10,
+    vx: 0,
+    vy: 0,
+    mass: 10,
     radius: 25,
     color: 'blue',
     draw: function() 
@@ -38,9 +39,9 @@ var draw = function ()
 }
 
 
-
 var simulation = function () 
 {
+    // clear canvas
     ctx.clearRect(0, 0, mycanvas.width, mycanvas.height);
 
     Ball.vy += TIME_STEP * G;
