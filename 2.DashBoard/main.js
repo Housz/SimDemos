@@ -4,7 +4,7 @@ var ctx = mycanvas.getContext("2d");
 const WIDTH  = 800;
 const HEIGHT = 800;
 
-const TIME_STEP = 1 / 60.0;
+const TIME_STEP = 0.1;
 const G = 10;
 
 var Ball = 
@@ -27,13 +27,13 @@ var Ball =
 }
 
 
-var init = function ()
+var init_main = function ()
 {
     mycanvas.width = WIDTH;
     mycanvas.height = HEIGHT;
 }
 
-var draw = function ()
+var draw_main = function ()
 {
     window.requestAnimationFrame(simulation);
 }
@@ -65,5 +65,5 @@ var simulation = function ()
 }
 
 
-init();
-draw();
+init_main();
+draw_main();

@@ -44,7 +44,7 @@ var onEnergy = function ()
 }
 
 
-var init = function ()
+var init_dashboard = function ()
 {
     dashboard.width = CHART_WIDTH;
     dashboard.height = CHART_HEIGHT;
@@ -59,7 +59,7 @@ var init = function ()
         energy[i]   = -100;
     }
 
-    window.requestAnimationFrame(draw);
+    window.requestAnimationFrame(draw_dashboard);
 }
 
 
@@ -89,7 +89,7 @@ var update_data = function ()
     energy.unshift(curr_energy_p + curr_energy_k);
 }
 
-var draw = function ()
+var draw_dashboard = function ()
 {
     // clear canvas
     dash_ctx.clearRect(0, 0, dashboard.width, dashboard.height);
@@ -156,11 +156,11 @@ var draw = function ()
 
     
     
-    window.requestAnimationFrame(draw);
+    window.requestAnimationFrame(draw_dashboard);
 }
 
 
 
 
-init();
-draw();
+init_dashboard();
+draw_dashboard();
