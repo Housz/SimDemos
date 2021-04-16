@@ -4,7 +4,7 @@ var ctx = mycanvas.getContext("2d");
 const WIDTH  = 800;
 const HEIGHT = 800;
 
-const TIME_STEP = 0.1;
+const TIME_STEP = 1 / 60.0;
 const G = 10;
 
 var Ball = 

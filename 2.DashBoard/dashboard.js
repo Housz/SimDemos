@@ -1,8 +1,8 @@
 var dashboard = document.getElementById("dashboard");
 var dash_ctx = dashboard.getContext("2d");
 
-const CHART_WIDTH  = 500;
-const CHART_HEIGHT = 500;
+const CHART_WIDTH  = 400;
+const CHART_HEIGHT = 400;
 
 // data array
 var coords_x = new Array(CHART_WIDTH);
