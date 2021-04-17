@@ -4,20 +4,28 @@ var ctx = mycanvas.getContext("2d");
 const WIDTH  = 800;
 const HEIGHT = 800;
 
-const TIME_STEP = 1 / 60.0;
+const TIME_STEP = 1 / 120.0;
 const NUM_SUB_STEPS = 10;
 const G = 9.8;
 
-var Ball = 
+
+var ball1, ball2, ball3;
+
+
+class Ball
 {
-    x: 0,
-    y: 0,
-    vx: 0,
-    vy: 0,
-    mass: 10,
-    radius: 25,
-    color: 'blue',
-    draw: function() 
+    constructor(x, y, vx, vy, mass, radius, color)
+    {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.mass = mass;
+        this.radius = radius;
+        this.color = color;
+    }
+
+    draw() 
     {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
@@ -25,13 +33,21 @@ var Ball =
         ctx.fillStyle = this.color;
         ctx.fill();
     }
+
+    
 }
+
+
 
 
 var init_main = function ()
 {
     mycanvas.width = WIDTH;
     mycanvas.height = HEIGHT;
+
+    ball1 = new Ball(100, 0, 0, 0, 10, 25, 'red');
+    ball2 = new Ball(300, 0, 0, 0, 10, 25, 'green');
+    ball3 = new Ball(500, 0, 0, 0, 10, 25, 'blue');
     
     window.requestAnimationFrame(draw_main);
 }
@@ -41,32 +57,32 @@ var draw_main = function ()
     // clear canvas
     ctx.clearRect(0, 0, mycanvas.width, mycanvas.height);
 
-    for (var i = 0; i < NUM_SUB_STEPS; i++)
+    for (let i = 0; i < NUM_SUB_STEPS; i++)
     {
         simulation();
     }
 
-    Ball.draw();
+    ball1.draw();
     window.requestAnimationFrame(draw_main);
 }
 
 
 var simulation = function () 
 {
-    Ball.vy += TIME_STEP * G;
+    ball1.vy += TIME_STEP * G;
 
-    Ball.x += TIME_STEP * Ball.vx;
-    Ball.y += TIME_STEP * Ball.vy;
+    ball1.x += TIME_STEP * ball1.vx;
+    ball1.y += TIME_STEP * ball1.vy;
 
 
     // simple collision detect
-    if (Ball.y > mycanvas.height || Ball.y < 0) 
+    if (ball1.y > mycanvas.height || ball1.y < 0) 
     {
-        Ball.vy = -Ball.vy;
+        ball1.vy = -ball1.vy;
     }
-    if (Ball.x > mycanvas.width  || Ball.x < 0) 
+    if (ball1.x > mycanvas.width  || ball1.x < 0) 
     {
-        Ball.vx = -Ball.vx;
+        ball1.vx = -ball1.vx;
     }
 }
 

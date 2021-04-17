@@ -72,17 +72,17 @@ var normalization = function (x, range)
 var update_data = function ()
 {
     coords_x.pop();
-    coords_x.unshift(Ball.x);
+    coords_x.unshift(ball1.x);
 
     coords_y.pop();
-    coords_y.unshift(Ball.y);
+    coords_y.unshift(ball1.y);
 
     energy_p.pop();
-    var curr_energy_p = Ball.mass * G * (HEIGHT - Ball.y);
+    var curr_energy_p = ball1.mass * G * (HEIGHT - ball1.y);
     energy_p.unshift(curr_energy_p);
 
     energy_k.pop();
-    var curr_energy_k = 0.5 * Ball.mass * (Ball.vx * Ball.vx + Ball.vy * Ball.vy);
+    var curr_energy_k = 0.5 * ball1.mass * (ball1.vx * ball1.vx + ball1.vy * ball1.vy);
     energy_k.unshift(curr_energy_k);
 
     energy.pop();
@@ -98,7 +98,7 @@ var draw_dashboard = function ()
 
     if (enableCoords_x) 
     {
-        for (var i = 0; i < CHART_WIDTH; i++)
+        for (let i = 0; i < CHART_WIDTH; i++)
         {
             var x = i;
             var y = CHART_WIDTH * normalization(coords_x[i], 1000);
@@ -109,7 +109,7 @@ var draw_dashboard = function ()
 
     if (enableCoords_y)
     {
-        for (var i = 0; i < CHART_WIDTH; i++)
+        for (let i = 0; i < CHART_WIDTH; i++)
         {
             var x = i;
             var y = CHART_WIDTH * normalization(coords_y[i], 800);
@@ -120,8 +120,8 @@ var draw_dashboard = function ()
 
     if (enableEnergy_p)
     {
-        var max_energy = Ball.mass * G * HEIGHT;
-        for (var i = 0; i < CHART_WIDTH; i++)
+        var max_energy = ball1.mass * G * HEIGHT;
+        for (let i = 0; i < CHART_WIDTH; i++)
         {
             var x = i;
             var y = CHART_HEIGHT - CHART_HEIGHT * normalization(energy_p[i], max_energy);
@@ -132,8 +132,8 @@ var draw_dashboard = function ()
 
     if (enableEnergy_k)
     {
-        var max_energy = Ball.mass * G * HEIGHT;
-        for (var i = 0; i < CHART_WIDTH; i++)
+        var max_energy = ball1.mass * G * HEIGHT;
+        for (let i = 0; i < CHART_WIDTH; i++)
         {
             var x = i;
             var y = CHART_HEIGHT - CHART_HEIGHT * normalization(energy_k[i], max_energy);
@@ -144,8 +144,8 @@ var draw_dashboard = function ()
 
     if (enableEnergy) 
     {
-        var max_energy = Ball.mass * G * HEIGHT;
-        for (var i = 0; i < CHART_WIDTH; i++)
+        var max_energy = ball1.mass * G * HEIGHT;
+        for (let i = 0; i < CHART_WIDTH; i++)
         {
             var x = i;
             var y = CHART_HEIGHT - CHART_HEIGHT * normalization(energy[i], max_energy);
