@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+	<title>Constrained Dynamics</title>
+	<style>
+		body {
+			font-family: verdana;
+			font-size: 15px;
+		}
+
+		.button {
+			background-color: #606060;
+			border: none;
+			color: white;
+			padding: 15px 32px;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+	<button class="button" onclick="setupScene()">Restart</button>
+	<button class="button" onclick="run()">Run</button>
+	<button class="button" onclick="step()">Step</button>
+	<br>
+	PBD <span id="force">0</span> &emsp; Analytic <span id="aforce">0</span>
+	<br>
+
+	<canvas id="myCanvas"></canvas>
+
+
+	<script>
+		var canvas = document.getElementById("myCanvas");
+		var c = canvas.getContext("2d");
+
+		canvas.width = window.innerWidth - 20;
+		canvas.height = window.innerHeight - 100;
+
+		var simMinWidth = 2.0;
+		var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+		var simWidth = canvas.width / cScale;
+		var simHeight = canvas.height / cScale;
+
+		function cX(pos) {
+			return pos.x * cScale;
+		}
+
+		function cY(pos) {
+			return canvas.height - pos.y * cScale;
+		}
+
+		class Vector2 {
+			constructor(x = 0.0, y = 0.0) {
+				this.x = x;
+				this.y = y;
+			}
+
+			set(v) {
+				this.x = v.x; this.y = v.y;
+			}
+
+			clone() {
+				return new Vector2(this.x, this.y);
+			}
+
+			add(v, s = 1.0) {
+				this.x += v.x * s;
+				this.y += v.y * s;
+				return this;
+			}
+
+			addVectors(a, b) {
+				this.x = a.x + b.x;
+				this.y = a.y + b.y;
+				return this;
+			}
+
+			subtract(v, s = 1.0) {
+				this.x -= v.x * s;
+				this.y -= v.y * s;
+				return this;
+			}
+
+			subtractVectors(a, b) {
+				this.x = a.x - b.x;
+				this.y = a.y - b.y;
+				return this;
+			}
+
+			length() {
+				return Math.sqrt(this.x * this.x + this.y * this.y);
+			}
+
+			scale(s) {
+				this.x *= s;
+				this.y *= s;
+				return this;
+			}
+
+			dot(v) {
+				return this.x * v.x + this.y * v.y;
+			}
+
+			perp() {
+				return new Vector2(-this.y, this.x);
+			}
+		}
+
+		var physicsScene =
+		{
+			gravity: new Vector2(0.0, -10.0),
+			dt: 1.0 / 60.0,
+			numSteps: 1000,
+			paused: false,
+			wireCenter: new Vector2(),
+			wireRadius: 0.0,
+			bead: null,
+			analyticBead: null
+		};
+
+
+		class Bead
+		{
+			constructor(radius, mass, pos)
+			{
+				this.radius = radius;
+				this.mass = mass;
+				this.pos = pos.clone();
+				this.prevPos = pos.clone();
+				this.vel = new Vector2();
+			}
+
+			startStep(dt, gravity)
+			{
+				this.vel.add(gravity, dt);
+				this.prevPos.set(this.pos);
+				this.pos.add(this.vel, dt);
+			}
+
+			keepOnWire(center, radius)
+			{
+				let dir = new Vector2();
+				dir.subtractVectors(this.pos, center);
+				let len = dir.length();
+				if(len == 0.0)
+					return;
+				dir.scale(1.0 / len);
+				let lambda = physicsScene.wireRadius - len;
+				this.pos.add(dir, lambda);
+				return lambda;
+			}
+
+			endStep(dt)
+			{
+				this.vel.subtractVectors(this.pos, this.prevPos);
+				this.vel.scale(1.0 / dt);
+			}
+		}
+
+
+
+
+	</script>
+
+</body>
+
+</html>

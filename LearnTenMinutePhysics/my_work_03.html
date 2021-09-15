@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+	<title>Billiard</title>
+	<style>
+		body {
+			font-family: verdana;
+			font-size: 15px;
+		}
+
+		.button {
+			background-color: #606060;
+			border: none;
+			color: white;
+			padding: 10px 32px;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+		}
+
+		.slider {
+			-webkit-appearance: none;
+			width: 80px;
+			height: 6px;
+			border-radius: 5px;
+			background: #d3d3d3;
+			outline: none;
+			opacity: 0.7;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
+	</style>
+</head>
+
+
+
+<body>
+	<button class="button" onclick="setupScene()">Restart</button>
+	Restitution <input type="range" min="0" max="10" value="10" id="restitutionSlider" class="slider">
+	<br>
+	<canvas id="myCanvas" style="border:2px solid"></canvas>
+
+
+	<script>
+
+		var mycanvas = document.getElementById("mycanvas");
+		var ctx = mycanvas.getContext("2d");
+
+		const WIDTH = 800;
+		const HEIGHT = 800;
+
+		const TIME_STEP = 0.1;
+		const G = 10;
+
+
+		class Vector2 {
+			constructor(x = 0.0, y = 0.0) { this.x = x; this.y = y; }
+
+			set(v) { this.x = v.x; this.y = v.y; }
+
+			clone() { return new Vector2(this.x, this.y); }
+
+
+			add(v, s = 1.0) {
+				this.x += v.x * s;
+				this.y += v.y * s;
+				return this;
+			}
+
+			addVectors(a, b) {
+				this.x = a.x + b.x;
+				this.y = a.y + b.y;
+				return this;
+			}
+
+			subtract(v, s = 1.0) {
+				this.x -= v.x * s;
+				this.y -= v.y * s;
+				return this;
+			}
+
+			subtractVectors(a, b) {
+				this.x = a.x - b.x;
+				this.y = a.y - b.y;
+				return this;
+			}
+
+			length() {
+				return Math.sqrt(this.x * this.x + this.y * this.y);
+			}
+
+			scale(s) {
+				this.x *= s;
+				this.y *= s;
+			}
+
+			dot(v) {
+				return this.x * v.x + this.y * v.y;
+			}
+
+
+		}
+
+		class Ball {
+			constructor(radius, mass, pos, vel) {
+				this.radius = radius;
+				this.mass = mass;
+				this.pos = pos.clone();
+				this.vel = vel.clone();
+			}
+
+			simulate(dt, gravity) {
+				this.vel.add(gravity, dt);
+				this.pos.add(this.vel, dt);
+			}
+		}
+
+		var physicsScene =
+		{
+			gravity: new Vector2(0.0, 0.0),
+			dt: 1.0 / 60.0,
+			worldSize: new Vector2(simWidth, simHeight),
+			paused: true,
+			balls: [],
+			restitution: 1.0
+		};
+
+		function setupScene()
+		{
+			physicsScene.balls = [];
+			var numBalls = 20;
+
+			for (i = 0; i < numBalls; i++) {
+
+				var radius = 0.05 + Math.random() * 0.1;
+				var mass = Math.PI * radius * radius;
+				var pos = new Vector2(Math.random() * simWidth, Math.random() * simHeight);
+				var vel = new Vector2(-1.0 + 2.0 * Math.random(), -1.0 + 2.0 * Math.random());
+
+				physicsScene.balls.push(new Ball(radius, mass, pos, vel));
+			}
+		}
+
+		function draw() 
+	{
+		c.clearRect(0, 0, canvas.width, canvas.height);
+
+		c.fillStyle = "#FF0000";
+
+		for (i = 0; i < physicsScene.balls.length; i++) {
+			var ball = physicsScene.balls[i];
+			c.beginPath();			
+			c.arc(
+				cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI); 
+			c.closePath();
+			c.fill();
+		}
+	}
+
+	
+
+	</script>
+
+
+
+
+
+</body>
+
+</html>
