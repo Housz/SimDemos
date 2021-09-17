@@ -34,9 +34,14 @@ Housz@sdust.edu.cn
     <script src='https://threejs.org/examples/js/controls/OrbitControls.js'></script>
 
     <p>
-        dt: 1/60 &nbsp&nbsp
+        <button id="btnRun" class="button" onclick="run()">Run</button>
+        &nbsp&nbsp
+        dt: 1/60
+        &nbsp&nbsp
         sub-steps:
         <input type="range" min="0" max="5" value="5" id="stepsSlider" class="slider"> <span id="steps">100000</span>
+        &nbsp&nbsp
+        <input type="checkbox" onclick="onTrail()" checked="checked"> <span id="trail">Trail</span>
     </p>
     <div id="container"></div>
 
@@ -49,6 +54,11 @@ Housz@sdust.edu.cn
         let gravity = -10.0;
         let dt = 1.0 / 60.0;
         let numSubSteps = 100000;
+
+        let trailNum = 100;
+
+        let paused = true;
+        let enableTrail = true;
 
 
         class Pendulum {
@@ -74,25 +84,37 @@ Housz@sdust.edu.cn
                     { x: .0, y: .0, z: .0 }
                 ];
 
+
                 // visualization
                 this.visMeshes = [];
                 // ball
                 for (let i = 0; i <= 3; i++) {
                     let ball = new THREE.SphereGeometry(0.1, 32, 32);
-                    let material = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-                    this.visMeshes.push(new THREE.Mesh(ball, material));
+                    let ballMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+                    this.visMeshes.push(new THREE.Mesh(ball, ballMaterial));
                     threeScene.add(this.visMeshes[i]);
                 };
 
                 // link
                 let linkPoints = [];
-                let material = new THREE.LineBasicMaterial({ color: 0xcccccc });
-                let geometry = new THREE.BufferGeometry().setFromPoints(linkPoints);
-                this.link = new THREE.Line(geometry, material);
+                let linkMaterial = new THREE.LineBasicMaterial({ color: 0xcccccc });
+                let linkGeometry = new THREE.BufferGeometry().setFromPoints(linkPoints);
+                this.link = new THREE.Line(linkGeometry, linkMaterial);
                 threeScene.add(this.link);
+
+                // trail
+                this.trailPoints = [];
+                this.trailPoints.push(new THREE.Vector3(this.pos[3].x, this.pos[3].y, this.pos[3].z));
+                let trailMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                let trailGeometry = new THREE.BufferGeometry().setFromPoints(this.trailPoints);
+                this.trail = new THREE.Line(trailGeometry, trailMaterial);
+                threeScene.add(this.trail);
+
+                this.draw();
             }
 
             simulate(sdt) {
+
                 // update position (caused by external forces)
                 for (let i = 1; i <= 3; i++) {
                     this.vel[i].y += sdt * gravity;
@@ -133,8 +155,8 @@ Housz@sdust.edu.cn
                     this.vel[i].z = (this.pos[i].z - this.prevPos[i].z) / sdt;
                 }
             }
-            draw() {
 
+            draw() {
                 //draw ball
                 for (let i = 0; i <= 3; i++) {
                     let posThree = new THREE.Vector3(this.pos[i].x, this.pos[i].y, this.pos[i].z);
@@ -147,10 +169,24 @@ Housz@sdust.edu.cn
                 for (let i = 0; i <= 3; i++) {
                     linkPoints.push(new THREE.Vector3(this.pos[i].x, this.pos[i].y, this.pos[i].z));
                 }
-                let material = new THREE.LineBasicMaterial({ color: 0xcccccc });
-                let geometry = new THREE.BufferGeometry().setFromPoints(linkPoints);
-                this.link = new THREE.Line(geometry, material);
+                let linkMaterial = new THREE.LineBasicMaterial({ color: 0xcccccc });
+                let linkGeometry = new THREE.BufferGeometry().setFromPoints(linkPoints);
+                this.link = new THREE.Line(linkGeometry, linkMaterial);
                 threeScene.add(this.link);
+
+                // draw trail
+                threeScene.remove(this.trail);
+                if (this.trailPoints.length > trailNum) {
+                    this.trailPoints.shift();
+                }
+                this.trailPoints.push(new THREE.Vector3(this.pos[3].x, this.pos[3].y, this.pos[3].z));
+                if (!enableTrail) {
+                    return;
+                }
+                let trailMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                let trailGeometry = new THREE.BufferGeometry().setFromPoints(this.trailPoints);
+                this.trail = new THREE.Line(trailGeometry, trailMaterial);
+                threeScene.add(this.trail);
             }
         }
 
@@ -242,8 +278,10 @@ Housz@sdust.edu.cn
         }
 
 
-
         function simulate() {
+            if (paused) {
+                return;
+            }
             let sdt = dt / numSubSteps;
             for (let step = 0; step < numSubSteps; step++) {
                 pendulum.simulate(sdt);
@@ -258,9 +296,20 @@ Housz@sdust.edu.cn
             cameraControl.update();
 
             requestAnimationFrame(update);
-
         }
 
+        function run() {
+            var button = document.getElementById('btnRun');
+            if (paused)
+                button.innerHTML = "Stop";
+            else
+                button.innerHTML = "Run";
+            paused = !paused;
+        }
+
+        function onTrail() {
+            enableTrail = !enableTrail;
+        }
 
         initThreeScene();
         let pendulum = new Pendulum();
