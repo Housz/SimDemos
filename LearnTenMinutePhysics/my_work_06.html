@@ -249,6 +249,7 @@ Housz@sdust.edu.cn
             renderer.shadowMap.enabled = true;
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(0.8 * window.innerWidth, 0.8 * window.innerHeight);
+            renderer.setClearColor(0xb9d3ff, 1);
             window.addEventListener('resize', onWindowResize, false);
             container.appendChild(renderer.domElement);
 
