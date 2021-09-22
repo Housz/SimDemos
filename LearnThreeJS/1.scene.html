@@ -7,7 +7,8 @@
     <style>
         body {
             margin: 0;
-            overflow: hidden; /* 隐藏body窗口区域滚动条 */
+            overflow: hidden;
+            /* 隐藏body窗口区域滚动条 */
         }
     </style>
 
@@ -22,14 +23,29 @@
         // geo
         let scene = new THREE.Scene();
         let geometry = new THREE.BoxGeometry(30, 40, 50);
-        let meterial = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+        // var meterial=new THREE.MeshLambertMaterial({
+        //     color:0xff0000,
+        //     opacity:1.0,
+        //     transparent:true
+        // }); // 透明度
+        var meterial = new THREE.MeshPhongMaterial({
+            color: 0xffa940,
+            specular: 0x4488ee,
+            shininess: 12
+        });  //高光
         let mesh = new THREE.Mesh(geometry, meterial);
         scene.add(mesh);
 
+        let axisHelper = new THREE.AxesHelper(50);
+        scene.add(axisHelper);
+
         // light
         let light = new THREE.PointLight(0xffffff);
-        light.position.set(100, 50, 50);
+        light.position.set(150, 150, 150);
         scene.add(light);
+
+        var ambient = new THREE.AmbientLight(0x444444);
+        scene.add(ambient); //环境光
 
         // window
         let width = window.innerWidth;
@@ -57,8 +73,7 @@
         //     render();
         // }, 10);
 
-        function render()
-        {
+        function render() {
             renderer.render(scene, camera);
             mesh.rotateY(0.01);
             requestAnimationFrame(render);
