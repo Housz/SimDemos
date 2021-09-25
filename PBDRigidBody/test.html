@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+	<div id="container"></div>
+
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="PBD.js"></script>
+
+	<script type="module">
+
+		// physics
+		let gravity = new THREE.Vector3(0.0, -10.0, 0.0);
+		let numSubSteps = 40;
+		let timeStep = 1.0 / 60.0;
+
+		let numObjects = 100;
+		let objSize = new THREE.Vector3(0.02, 0.04, 0.02);
+		let lastObjSize = new THREE.Vector3(0.2, 0.04, 0.2);
+
+		let rotDamping = 1000.0;
+		let posDamping = 1000.0;
+
+		let bodies = [];
+		let joints = [];
+
+		// visual
+		let scene;
+		let camera;
+		let renderer;
+		let container = document.getElementById('container');
+
+		let windowHalfX = window.innerWidth / 2;
+		let windowHalfY = window.innerHeight / 2;
+
+		let grabDistance = 0.0;
+		let grabJoint = null;
+
+		let raycaster = new THREE.Raycaster();
+		raycaster.layers.set(1);
+		raycaster.params.Mesh.threshold = 3;
+
+		let mousePos = new THREE.Vector2();
+		let mouseDown = false;
+		let cameraLookAt = new THREE.Vector3(0.0, 3.0, 0.0);
+		let camPosition = new THREE.Vector3(0.0, 3.0, 4.0);
+		let cameraDirX = new THREE.Vector3(0.0, 0.0, 0.0);
+		let cameraDirY = new THREE.Vector3(0.0, 0.0, 0.0);
+		let cameraDirZ = new THREE.Vector3(0.0, 0.0, 0.0);
+
+		let init = function () {
+			scene = new THREE.Scene();
+
+			// Lights
+			scene.add(new THREE.AmbientLight(0x505050));
+			//scene.fog = new THREE.Fog( 0x000000, 0, 15 );	
+
+			let spotLight = new THREE.SpotLight(0xffffff);
+			spotLight.angle = Math.PI / 5;
+			spotLight.penumbra = 0.2;
+			spotLight.position.set(2, 3, 3);
+			spotLight.castShadow = true;
+			spotLight.shadow.camera.near = 3;
+			spotLight.shadow.camera.far = 10;
+			spotLight.shadow.mapSize.width = 1024;
+			spotLight.shadow.mapSize.height = 1024;
+			scene.add(spotLight);
+
+			let dirLight = new THREE.DirectionalLight(0x55505a, 1);
+			dirLight.position.set(0, 3, 0);
+			dirLight.castShadow = true;
+			dirLight.shadow.camera.near = 1;
+			dirLight.shadow.camera.far = 10;
+
+			dirLight.shadow.camera.right = 1;
+			dirLight.shadow.camera.left = - 1;
+			dirLight.shadow.camera.top = 1;
+			dirLight.shadow.camera.bottom = - 1;
+
+			dirLight.shadow.mapSize.width = 1024;
+			dirLight.shadow.mapSize.height = 1024;
+			scene.add(dirLight);
+
+			// Geometry	
+			let material = new THREE.MeshPhongMaterial({
+				color: 0x80ee10,
+				shininess: 100,
+				side: THREE.DoubleSide
+			});
+
+			let ground = new THREE.Mesh(
+				new THREE.PlaneBufferGeometry(20, 20, 1, 1),
+				new THREE.MeshPhongMaterial({ color: 0xa0adaf, shininess: 150 })
+			);
+			ground.rotation.x = - Math.PI / 2; // rotates X/Y to X/Z
+			ground.receiveShadow = true;
+			scene.add(ground);
+
+			let helper = new THREE.GridHelper(20, 20);
+			helper.material.opacity = 0.5;
+			helper.material.transparent = true;
+			helper.position.set(0, 0.001, 0);
+			scene.add(helper);
+
+			// renderer
+			renderer = new THREE.WebGLRenderer();
+			renderer.shadowMap.enabled = true;
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(0.8 * window.innerWidth, 0.5 * window.innerHeight);
+			window.addEventListener('resize', onWindowResize, false);
+			container.appendChild(renderer.domElement);
+
+
+			// camera
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 100);
+			camera.position.set(camPosition.x, camPosition.y, camPosition.z);
+			camera.lookAt(cameraLookAt);
+			camera.updateMatrixWorld();
+			scene.add(camera);
+
+			createObjects();
+
+			// interaction
+			container.addEventListener('mousedown', onMouse, false);
+			container.addEventListener('mousemove', onMouse, false);
+			container.addEventListener('mouseup', onMouse, false);
+			container.addEventListener('wheel', onWheel, false);
+			container.addEventListener('touchstart', onTouch, false);
+			container.addEventListener('touchend', onTouch, false);
+			container.addEventListener('touchmove', onTouch, false);1
+		};
+
+		let createObjects = function ()
+		{
+			let pos = new THREE.Vector3(0.0, )
+		};
+
+	</script>
+</body>
+
+</html>
