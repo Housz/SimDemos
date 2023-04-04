@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<title>Euler Fluid simulation</title>
+		<style>
+
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas"></canvas>
+	</body>
+	<script>
+		let canvas = document.getElementById('myCanvas');
+		let ctx = canvas.getContext('2d');
+		canvas.width = window.innerWidth-20;
+		canvas.height = window.innerHeight-100;
+
+		canvas.focus();
+
+		const simHeight = 1.1;
+		let cScale = canvas.height / simHeight;
+		let simWidth = canvas.width / cScale;
+	</script>
+</html>

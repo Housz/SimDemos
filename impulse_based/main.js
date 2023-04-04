@@ -7,6 +7,7 @@ const HEIGHT = 800;
 const TIME_STEP = 1 / 60.0;
 
 const G = -10;
+const PI = 3.14159265358979323846264;
 
 class vec2
 {
@@ -27,12 +28,30 @@ class vec2
 		this.y += v.y;
 	}
 
-	
+	sub(v)
+	{
+		this.x -= v.x;
+		this.y -= v.y;
+	}
 
+	scale(s)
+	{
+		this.x *= s;
+		this.y *= s;
+	}
 
+	length()
+	{
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+
+	dot(v)
+	{
+		return this.x*v.x + this.y*v.y;
+	}
 }
 
 class Rect
 {
-	constructor()
+	constructor(pos, )
 }
