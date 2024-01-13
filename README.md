@@ -4,8 +4,13 @@ just for fun :)
 
 ---
 
+# Physics Demos
 [Single ball with gravity](./1.SingleBallwithGravity/index.html)
 
 [Dashboard](2.DashBoard/index.html)
 
 [Simple numerical](3.SimpleNumerical\index.html)
+
+# Three.js Demos
+
+[Random Color for Instanced Mesh](ThreeJS/randomcolor/index.html)
