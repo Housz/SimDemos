@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #c {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+    <canvas id="c"></canvas>
+</head>
+
+<body>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+          }
+        }
+    </script>
+
+    <script type="module" src="main.js"></script>
+
+</body>
+
+</html>

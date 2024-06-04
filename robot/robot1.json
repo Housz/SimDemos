@@ -1,0 +1,191 @@
+{
+	"name": "机器人测试模型",
+	"links": [
+		{
+			"name": "world"
+		},
+
+		{
+			"name": "base_link",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": null
+		},
+
+		{
+			"name": "link1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 5,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 5,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link3",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 5,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link31",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 1,
+					"y": 0.1,
+					"z": 0.1
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link32",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 1,
+					"y": 0.1,
+					"z": 0.1
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		}
+	],
+
+	"joints": [
+		{
+			"name": "world_joint",
+			"parent": "world",
+			"child": "base_link",
+			"type": "fixed"
+		},
+
+		{
+			"name": "joint1",
+			"parent": "base_link",
+			"child": "link1",
+			"type": "revolute",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 1.57, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint2",
+			"parent": "link1",
+			"child": "link2",
+			"type": "revolute",
+			"origin_translation": [5, 0, 0],
+			"origin_orientation": [0, 0, 1.57],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint3",
+			"parent": "link2",
+			"child": "link3",
+			"type": "revolute",
+			"origin_translation": [5, 0, 0],
+			"origin_orientation": [0, 1.57, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint31",
+			"parent": "link3",
+			"child": "link31",
+			"type": "revolute",
+			"origin_translation": [5, 0, 0],
+			"origin_orientation": [0, 0, 0.5],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint32",
+			"parent": "link3",
+			"child": "link32",
+			"type": "revolute",
+			"origin_translation": [5, 0, 0],
+			"origin_orientation": [0, 0, -0.5],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		}
+
+	]
+
+}
