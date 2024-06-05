@@ -100,7 +100,7 @@ let targetMesh = new THREE.Mesh(targetGeo, targetMat);
 scene.add(targetMesh);
 
 transformControl.attach(targetMesh);
-scene.add(transformControl);
+// scene.add(transformControl);
 
 
 
@@ -170,25 +170,25 @@ loadRobotJson("./robot.json")
 		robotGUICreator(robot, robotModel);
 
 		// controller
-		const gui = new GUI();
+		// const gui = new GUI();
 
-		gui.title("controller");
-		let controllerFolder = gui.addFolder("控制");
-		let controllerObject = {
-			clearAllKeys: () => { clearAllKeys(); },
-			saveKeyPosition: () => { saveKeyPosition(); },
-			playTrajectory: () => { playTrajectory(); }
-		};
+		// gui.title("controller");
+		// let controllerFolder = gui.addFolder("控制");
+		// let controllerObject = {
+		// 	clearAllKeys: () => { clearAllKeys(); },
+		// 	saveKeyPosition: () => { saveKeyPosition(); },
+		// 	playTrajectory: () => { playTrajectory(); }
+		// };
 
-		controllerFolder.add(controllerObject, 'clearAllKeys');
-		controllerFolder.add(controllerObject, 'saveKeyPosition');
-		controllerFolder.add(controllerObject, 'playTrajectory');
+		// controllerFolder.add(controllerObject, 'clearAllKeys');
+		// controllerFolder.add(controllerObject, 'saveKeyPosition');
+		// controllerFolder.add(controllerObject, 'playTrajectory');
 
-		transformControl.addEventListener('change', function (event) {
+		// transformControl.addEventListener('change', function (event) {
 
-			robotIKHandler(targetMesh, robotModel);
+		// 	robotIKHandler(targetMesh, robotModel);
 
-		});
+		// });
 
 
 
