@@ -97,7 +97,7 @@ scene.add(helper);
 let targetGeo = new THREE.SphereGeometry(0.3, 16, 8);
 let targetMat = new THREE.MeshPhongMaterial({ color: 0xffff00, transparent: true, opacity: 0.4 });
 let targetMesh = new THREE.Mesh(targetGeo, targetMat);
-scene.add(targetMesh);
+// scene.add(targetMesh);
 
 transformControl.attach(targetMesh);
 // scene.add(transformControl);
@@ -143,7 +143,8 @@ function loadRobotJson(url) {
 	});
 }
 
-loadRobotJson("./robot.json")
+loadRobotJson(model)
+// loadRobotJson("./robot.json")
 // loadRobotJson("./models/UR5/UR5.json")
 // loadRobotJson("./models/stanford/StanfordRRP.json")
 	.then(data => {
