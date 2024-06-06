@@ -2,17 +2,6 @@
 	"name": "机器人测试模型",
 	"links": [
 		{
-			"name": "world"
-		},
-
-		{
-			"name": "base_link",
-			"origin_translation": [0, 0, 0],
-			"origin_orientation": [0, 0, 0],
-			"visual": null
-		},
-
-		{
 			"name": "link0",
 			"origin_translation": [0, 0, 0],
 			"origin_orientation": [0, 0, 0],
@@ -48,34 +37,10 @@
 					"color": [120, 10, 0]
 				}
 			}
-		},
-		{
-			"name": "link2",
-			"origin_translation": [0, 0, 0],
-			"origin_orientation": [0, 0, 0],
-			"visual": {
-				"origin_translation": [0, 0, 0],
-				"origin_orientation": [0, 0, 0],
-				"geometry": {
-					"type": "mesh",
-					"url": "./models/UR5/shoulder.obj",
-					"scale": [10, 10, 10]
-				},
-				"material": {
-					"color": [120, 10, 0]
-				}
-			}
 		}
 	],
 
 	"joints": [
-		{
-			"name": "world_joint",
-			"parent": "world",
-			"child": "base_link",
-			"type": "fixed"
-		},
-
 		{
 			"name": "joint0",
 			"parent": "base_link",
@@ -94,13 +59,14 @@
 			"origin_orientation": [0, 0, 0],
 			"axis": [0, 0, 1],
 			"limit": {
-				"lower": -1.57,
-				"upper": 1.57
+				"lower": -2,
+				"upper": 2
 			}
 		}
 	],
 
 	"constraints": [
+		
 	]
 
 }

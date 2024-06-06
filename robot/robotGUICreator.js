@@ -15,10 +15,12 @@ function robotGUICreator(robot, robotModel) {
 
 		let folder = gui.addFolder(joint.name + " (" + joint.type + ")");
 
-		let lower = joint.limit.lower;
-		let upper = joint.limit.upper;
 
 		if (joint.type == "revolute") {
+
+			let lower = joint.limit.lower;
+			let upper = joint.limit.upper;
+
 			// console.log(jointModel.rotation);
 			let jointGUIObject = {
 				x: jointModel.rotation.x,
@@ -54,6 +56,9 @@ function robotGUICreator(robot, robotModel) {
 
 		else if(joint.type == "prismatic") {
 
+			let lower = joint.limit.lower;
+			let upper = joint.limit.upper;
+
 			let jointGUIObject = {
 				x: jointModel.position.x,
 				y: jointModel.position.y,
@@ -85,6 +90,60 @@ function robotGUICreator(robot, robotModel) {
 			}
 		}
 
+		else if(joint.type == "fixed"){
+			
+			if (! joint.parent == "base_link") {
+				return;
+			}
+
+			folder.title("joint0 (world coordinates)");
+
+			let lower = 0;
+			let upper = 5;
+
+			let jointTranslationGUIObject = {
+				translationX: jointModel.position.x,
+				translationY: jointModel.position.y,
+				translationZ: jointModel.position.z,
+			};
+
+			let translationSliderX = folder.add(jointTranslationGUIObject, 'translationX', lower, upper).onChange(value => {
+				jointModel.position.x = value;
+			});
+			translationSliderX.listen();
+
+			let translationSliderY = folder.add(jointTranslationGUIObject, 'translationY', lower, upper).onChange(value => {
+				jointModel.position.y = value;
+			});
+			translationSliderY.listen();
+
+			let translationSliderZ = folder.add(jointTranslationGUIObject, 'translationZ', lower, upper).onChange(value => {
+				jointModel.position.z = value;
+			});
+			translationSliderZ.listen();
+
+			let jointRotationGUIObject = {
+				rotationX: jointModel.rotation.x,
+				rotationY: jointModel.rotation.y,
+				rotationZ: jointModel.rotation.z,
+			};
+
+			let rotationSliderX = folder.add(jointRotationGUIObject, 'rotationX', lower, upper).onChange(value => {
+				jointModel.rotation.x = value;
+			});
+			rotationSliderX.listen();
+
+			let rotationSliderY = folder.add(jointRotationGUIObject, 'rotationY', lower, upper).onChange(value => {
+				jointModel.rotation.y = value;
+			});
+			rotationSliderY.listen();
+
+			let rotationSliderZ = folder.add(jointRotationGUIObject, 'rotationZ', lower, upper).onChange(value => {
+				jointModel.rotation.z = value;
+			});
+			rotationSliderZ.listen();
+
+		}
 		else {
 			// todo
 		}

@@ -14,6 +14,8 @@ function robotCreator(robot) {
 	base_link.name = "base_link";
 	robotModel.add(base_link);
 
+	// fixedJointModel.position.set();
+
 	/**
 	 * 1. build topology tree
 	 */
@@ -21,6 +23,8 @@ function robotCreator(robot) {
 	let linkModels = [];
 
 	robot.joints.forEach(joint => {
+
+
 
 		let jointModel = createJointModel(joint);
 
@@ -189,6 +193,7 @@ function getChildByName(object, childName) {
 
 function createJointModel(joint) {
 
+
 	if (joint.type == "fixed") {
 
 		let fixedJointModel = new THREE.Object3D();
@@ -198,6 +203,8 @@ function createJointModel(joint) {
 		fixedJointModel.position.set(joint.origin_translation.x, joint.origin_translation.y, joint.origin_translation.z);
 
 		fixedJointModel.isJoint = true;
+
+
 
 		return fixedJointModel;
 
@@ -225,7 +232,7 @@ function createJointModel(joint) {
 		mat4.makeRotationAxis(rotationAxis, rotationAngle);
 
 		geometry.applyMatrix4(mat4);
-		const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, transparent: true, opacity: 1 });
+		const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.7 });
 		const cylinder = new THREE.Mesh(geometry, material);
 		cylinder.castShadow = true;
 
