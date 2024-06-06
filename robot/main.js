@@ -143,7 +143,7 @@ function loadRobotJson(url) {
 	});
 }
 
-loadRobotJson(model)
+loadRobotJson(modelPath)
 // loadRobotJson("./robot.json")
 // loadRobotJson("./models/UR5/UR5.json")
 // loadRobotJson("./models/stanford/StanfordRRP.json")
@@ -199,6 +199,27 @@ loadRobotJson(model)
 	.catch(error => {
 		console.error('Error loading JSON:', error);
 	});
+
+
+function readFromText(robotJson){
+	console.log(robotJson);
+
+	scene.remove(robotModel);
+
+	let robot = robotParser(robotJson);
+
+
+		robotModel = robotCreator(robot);
+
+
+		console.log("robotModel");
+		console.log(robotModel);
+
+
+		scene.add(robotModel);
+
+		robotGUICreator(robot, robotModel);
+}
 
 
 
@@ -328,3 +349,25 @@ function render() {
 }
 
 requestAnimationFrame(render);
+
+
+
+/////////////////////////////////// Read JSON Text ///////////////////////////////////
+// function loadFile(event) {
+//     const file = event.target.files[0];
+//     const reader = new FileReader();
+//     reader.onload = function(event) {
+//         const json = JSON.parse(event.target.result);
+//         displayContent(json);
+//     };
+//     reader.readAsText(file);
+// }
+
+// function displayContent(json) {
+//     const contentDiv = document.getElementById('content');
+//     contentDiv.innerHTML = '<pre>' + JSON.stringify(json, null, 2) + '</pre>';
+
+//     readFromText();
+// }
+
+export { readFromText }

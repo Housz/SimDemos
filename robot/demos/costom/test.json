@@ -1,0 +1,71 @@
+{
+	"name": "机器人测试模型",
+	"links": [
+		{
+			"name": "link0",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 2,
+					"y": 4,
+					"z": 2
+				},
+				"material": {
+					"color": [40, 40, 40]
+				}
+			}
+		},
+
+		{
+			"name": "link1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 10,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		}
+	],
+
+	"joints": [
+		{
+			"name": "joint0",
+			"parent": "base_link",
+			"child": "link0",
+			"type": "fixed",
+			"origin_translation": [0, 2, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "joint1",
+			"parent": "link0",
+			"child": "link1",
+			"type": "revolute",
+			"origin_translation": [2, 2, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		}
+	],
+
+	"constraints": [
+	]
+
+}
