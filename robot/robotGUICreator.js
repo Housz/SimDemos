@@ -92,7 +92,7 @@ function robotGUICreator(robot, robotModel) {
 
 		else if(joint.type == "fixed"){
 			
-			if (! joint.parent == "base_link") {
+			if (joint.parent != "base_link") {
 				return;
 			}
 
