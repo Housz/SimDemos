@@ -156,7 +156,42 @@ function robotCreator(robot) {
 	/**
 	 * constraints init
 	 */
-	robotConstraintHandler(robot, robotModel, null);
+	// init jointL_base_angle
+	robot.constraints.forEach(constraint => {
+		
+		// let jointA = robot.jointMap.get(constraint.jointA);
+		let jointAModel = getChildByName(robotModel, constraint.jointA);
+
+		// let jointB = robot.jointMap.get(constraint.jointB);
+		let jointBModel = getChildByName(robotModel, constraint.jointB);
+
+		// let jointL = robot.jointMap.get(constraint.jointL);
+		let jointLModel = getChildByName(robotModel, constraint.jointL);
+
+
+		let A_world = new THREE.Vector3();
+		jointAModel.getWorldPosition(A_world);
+		// console.log(A_world);
+
+		let B_world = new THREE.Vector3();
+		jointBModel.getWorldPosition(B_world);
+
+		let L_world = new THREE.Vector3();
+		jointLModel.getWorldPosition(L_world);
+
+		let LB = new THREE.Vector3();
+		LB.subVectors(B_world, L_world);
+		let LA = new THREE.Vector3();
+		LA.subVectors(A_world, L_world);
+
+		constraint.jointL_base_angle = LA.angleTo(LB);
+
+		console.log(constraint.name);
+		console.log(constraint.jointL_base_angle);
+		
+	});
+
+	// robotConstraintHandler(robot, robotModel, null);
 
 	return robotModel;
 
@@ -212,7 +247,7 @@ function createJointModel(joint) {
 
 	else if (joint.type == "revolute") {
 		
-		const geometry = new THREE.CylinderGeometry(.2, .2, .5, 16);
+		const geometry = new THREE.CylinderGeometry(.2, .2, .51, 16);
 		// const geometry = new THREE.CylinderGeometry(.0002, .0002, .0005, 16);
 		geometry.rotateZ(Math.PI / 2); // axis to [1, 0, 0]
 

@@ -208,9 +208,7 @@ function readFromText(robotJson){
 
 	let robot = robotParser(robotJson);
 
-
 		robotModel = robotCreator(robot);
-
 
 		console.log("robotModel");
 		console.log(robotModel);

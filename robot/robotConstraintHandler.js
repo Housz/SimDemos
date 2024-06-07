@@ -6,23 +6,46 @@ function robotConstraintHandler(robot, robotModel, constraintName) {
 	if (constraintName) {
 		let dirveConstraint = robot.constraintMap.get(constraintName);
 
-		let a = robot.jointMap.get(dirveConstraint.jointA).origin_translation.length();
-		let b = robot.jointMap.get(dirveConstraint.jointB).origin_translation.length();
+		// let a = robot.jointMap.get(dirveConstraint.jointA).origin_translation.length();
+		// let b = robot.jointMap.get(dirveConstraint.jointB).origin_translation.length();
+
+		let jointLModel = getChildByName(robotModel, dirveConstraint.jointL);
+		let L_world = new THREE.Vector3();
+		jointLModel.getWorldPosition(L_world);
+
+		let jointAModel = getChildByName(robotModel, dirveConstraint.jointA);
+		let A_world = new THREE.Vector3();
+		jointAModel.getWorldPosition(A_world);
+
+		let jointBModel = getChildByName(robotModel, dirveConstraint.jointB);
+		let B_world = new THREE.Vector3();
+		jointBModel.getWorldPosition(B_world);
+
+		let vec_a = new THREE.Vector3();
+		vec_a.subVectors(A_world, L_world);
+		let a = vec_a.length();
+
+		let vec_b = new THREE.Vector3();
+		vec_b.subVectors(B_world, L_world);
+		let b = vec_b.length();
+
 		let l = dirveConstraint.length;
-		let jointL_base_angle = dirveConstraint.jointL_base_angle;
+		// let jointL_base_angle = dirveConstraint.jointL_base_angle;
+		// let jointL_base_angle = 
 
 		let angleL = computeAngle(a, b, l);
-		angleL -= jointL_base_angle;
+		// angleL -= jointL_base_angle;
+		angleL -= dirveConstraint.jointL_base_angle;
 
+		console.log("Constraint:");
 		console.log(a);
 		console.log(b);
 		console.log(l);
 		console.log(angleL);
-		console.log(jointL_base_angle);
-
+		console.log("");
 
 		let jointL = robot.jointMap.get(dirveConstraint.jointL);
-		let jointLModel = getChildByName(robotModel, dirveConstraint.jointL);
+		// let jointLModel = getChildByName(robotModel, dirveConstraint.jointL);
 
 
 		updateRevoluteAngle(jointL, jointLModel, angleL);
@@ -97,7 +120,14 @@ function robotConstraintHandler(robot, robotModel, constraintName) {
 
 function computeAngle(a, b, l) {
 
-	return Math.acos((a * a + b * b - l * l) / (2 * a * b));
+	let angleL = Math.acos((a * a + b * b - l * l) / (2 * a * b));
+
+	if (angleL > 0) {
+		return angleL;
+	}
+	else {
+		alert("ERROR! 油缸超出运动范围！")
+	}
 
 }
 

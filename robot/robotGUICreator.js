@@ -46,6 +46,7 @@ function robotGUICreator(robot, robotModel) {
 
 			let sliderZ = folder.add(jointGUIObject, 'z', lower, upper).onChange(value => {
 				jointModel.rotation.z = value;
+				// robotConstraintHandler(robot, robotModel, robot.constraints[0].name);
 			});
 			sliderZ.listen();
 			if (joint.axis.z == 0) {
@@ -153,6 +154,8 @@ function robotGUICreator(robot, robotModel) {
 	robot.constraints.forEach(constraint => {
 
 		if (constraint.type == "triangle-prismatic") {
+			
+			robotConstraintHandler(robot, robotModel, constraint.name);
 
 			let folder = gui.addFolder(constraint.name + " (prismatic)");
 
