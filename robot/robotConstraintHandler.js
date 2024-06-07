@@ -37,12 +37,12 @@ function robotConstraintHandler(robot, robotModel, constraintName) {
 		// angleL -= jointL_base_angle;
 		angleL -= dirveConstraint.jointL_base_angle;
 
-		console.log("Constraint:");
-		console.log(a);
-		console.log(b);
-		console.log(l);
-		console.log(angleL);
-		console.log("");
+		// console.log("Constraint " + constraintName);
+		// console.log(a);
+		// console.log(b);
+		// console.log(l);
+		// console.log(angleL);
+		// console.log("------------------");
 
 		let jointL = robot.jointMap.get(dirveConstraint.jointL);
 		// let jointLModel = getChildByName(robotModel, dirveConstraint.jointL);
