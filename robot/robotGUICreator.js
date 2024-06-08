@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-import { robotConstraintHandler } from './robotConstraintHandler.js'
+import { robotConstraintHandler, updateAllConstraints } from './robotConstraintHandler.js'
 
 function robotGUICreator(robot, robotModel) {
 
@@ -30,6 +30,7 @@ function robotGUICreator(robot, robotModel) {
 
 			let sliderX = folder.add(jointGUIObject, 'x', lower, upper).onChange(value => {
 				jointModel.rotation.x = value;
+				updateAllConstraints(robot, robotModel);
 			});
 			sliderX.listen();
 			if (joint.axis.x == 0) {
@@ -38,6 +39,7 @@ function robotGUICreator(robot, robotModel) {
 
 			let sliderY = folder.add(jointGUIObject, 'y', lower, upper).onChange(value => {
 				jointModel.rotation.y = value;
+				updateAllConstraints(robot, robotModel);
 			});
 			sliderY.listen();
 			if (joint.axis.y == 0) {
@@ -45,8 +47,8 @@ function robotGUICreator(robot, robotModel) {
 			}
 
 			let sliderZ = folder.add(jointGUIObject, 'z', lower, upper).onChange(value => {
-				jointModel.rotation.z = value;
-				// robotConstraintHandler(robot, robotModel, robot.constraints[0].name);
+				jointModel.rotation.z = value;				
+				updateAllConstraints(robot, robotModel);
 			});
 			sliderZ.listen();
 			if (joint.axis.z == 0) {
@@ -68,6 +70,7 @@ function robotGUICreator(robot, robotModel) {
 
 			let sliderX = folder.add(jointGUIObject, 'x', lower, upper).onChange(value => {
 				jointModel.position.x = value;
+				updateAllConstraints(robot, robotModel);
 			});
 			sliderX.listen();
 			if (joint.axis.x == 0) {
@@ -76,6 +79,7 @@ function robotGUICreator(robot, robotModel) {
 
 			let sliderY = folder.add(jointGUIObject, 'y', lower, upper).onChange(value => {
 				jointModel.position.y = value;
+				updateAllConstraints(robot, robotModel);
 			});
 			sliderY.listen();
 			if (joint.axis.y == 0) {
@@ -84,6 +88,7 @@ function robotGUICreator(robot, robotModel) {
 
 			let sliderZ = folder.add(jointGUIObject, 'z', lower, upper).onChange(value => {
 				jointModel.position.z = value;
+				updateAllConstraints(robot, robotModel);
 			});
 			sliderZ.listen();
 			if (joint.axis.z == 0) {
