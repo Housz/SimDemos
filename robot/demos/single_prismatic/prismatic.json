@@ -76,8 +76,8 @@
 			"origin_orientation": [0, 0, 0],
 			"axis": [1, 0, 0],
 			"limit": {
-				"lower": -1.57,
-				"upper": 1.57
+				"lower": -2,
+				"upper": 2
 			}
 		}
 	],

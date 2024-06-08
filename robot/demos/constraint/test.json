@@ -133,8 +133,6 @@
 			}
 		}
 
-
-
 	],
 
 	"constraints": [
@@ -145,14 +143,12 @@
 			"jointL": "jointL",
 			"jointA": "jointA",
 			"jointB": "jointB",
-			"jointL_base_angle": "0.52",
 			"length": 1,
 			"limit": {
 				"lower": 1,
 				"upper": 2
 			}
 		}
-
 
 	]
 

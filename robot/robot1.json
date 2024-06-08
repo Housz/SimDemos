@@ -429,7 +429,6 @@
 			"jointL": "joint2",
 			"jointA": "jointA_constraint2",
 			"jointB": "jointB_constraint2",
-			"jointL_base_angle": "0",
 			"length": 1.2,
 			"limit": {
 				"lower": 1.2,
@@ -443,7 +442,6 @@
 			"jointL": "joint1",
 			"jointA": "jointA_constraint11",
 			"jointB": "jointB_constraint11",
-			"jointL_base_angle": "1.57",
 			"length": 1.414,
 			"limit": {
 				"lower": 1,
@@ -457,7 +455,6 @@
 			"jointL": "joint1",
 			"jointA": "jointA_constraint12",
 			"jointB": "jointB_constraint12",
-			"jointL_base_angle": "1.57",
 			"length": 1.414,
 			"limit": {
 				"lower": 1,

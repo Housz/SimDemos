@@ -59,14 +59,14 @@
 			"origin_orientation": [0, 0, 0],
 			"axis": [0, 0, 1],
 			"limit": {
-				"lower": -2,
-				"upper": 2
+				"lower": -1.57,
+				"upper": 1.57
 			}
 		}
 	],
 
 	"constraints": [
-		
+
 	]
 
 }
