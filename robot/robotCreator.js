@@ -417,6 +417,8 @@ async function createLinkModel(link) {
 
 		let meshURL = visual.geometry.url;
 
+		let meshScale = visual.geometry.scale;
+
 		let [object] = await Promise.all([objloader.loadAsync(meshURL)]);
 		object.children[0].name = link.name;
 
@@ -426,7 +428,10 @@ async function createLinkModel(link) {
 
 		object.children[0].material = material;
 
+		object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
+
 		object.children[0].geometry.rotateX(-1.57);
+
 
 		// object.children[0].rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
 		// object.children[0].position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
