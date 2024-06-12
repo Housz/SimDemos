@@ -1,0 +1,497 @@
+{
+	"name": "机器人测试模型",
+	"links": [
+		{
+			"name": "world"
+		},
+
+		{
+			"name": "base_link",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": null
+		},
+
+		{
+			"name": "link0",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 0.2,
+					"y": 0.3,
+					"z": 2
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "link1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 3,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "huizhuan",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"x": 3,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 5,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link3",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 5,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link31",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 1,
+					"y": 0.1,
+					"z": 0.1
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link11",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 2,
+					"y": 0.1,
+					"z": 0.1
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link_lifting_base",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 2,
+					"y": 0.05,
+					"z": 1
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "linka_constraint2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.1,
+					"r2": 0.1,
+					"h": 1
+				},
+				"material": {
+					"color": [80, 80, 80],
+					"opacity": 0.7
+				}
+			}
+		},
+
+		{
+			"name": "linkb_constraint2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.05,
+					"r2": 0.05,
+					"h": 1
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+
+
+		{
+			"name": "linka_constraint11",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.1,
+					"r2": 0.1,
+					"h": 1
+				},
+				"material": {
+					"color": [80, 80, 80],
+					"opacity": 0.7
+				}
+			}
+		},
+
+		{
+			"name": "linkb_constraint11",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.05,
+					"r2": 0.05,
+					"h": 1
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "linka_constraint12",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.1,
+					"r2": 0.1,
+					"h": 1
+				},
+				"material": {
+					"color": [80, 80, 80],
+					"opacity": 0.7
+				}
+			}
+		},
+
+		{
+			"name": "linkb_constraint12",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual":{
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.05,
+					"r2": 0.05,
+					"h": 1
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		}
+	
+
+
+	],
+
+	"joints": [
+		{
+			"name": "joint0",
+			"parent": "base_link",
+			"child": "link0",
+			"type": "fixed",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "joint1",
+			"parent": "link0",
+			"child": "link1",
+			"type": "revolute",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint2",
+			"parent": "link1",
+			"child": "link2",
+			"type": "revolute",
+			"origin_translation": [3, 0, 0],
+			"origin_orientation": [0, 0, 0.785],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint3",
+			"parent": "link2",
+			"child": "link3",
+			"type": "revolute",
+			"origin_translation": [5, 0, 0],
+			"origin_orientation": [0, 1.57, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint31",
+			"parent": "link3",
+			"child": "link31",
+			"type": "revolute",
+			"origin_translation": [5, 0, 0],
+			"origin_orientation": [0, 0, 0.5],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "jonit_lifting_base",
+			"parent": "link1",
+			"child": "link_lifting_base",
+			"type": "fixed",
+			"origin_translation": [3, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "jointA_constraint2",
+			"parent": "link_lifting_base",
+			"child": "linka_constraint2",
+			"type": "revolute",
+			"origin_translation": [1, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": 0,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "jointB_constraint2",
+			"parent": "link2",
+			"child": "linkb_constraint2",
+			"type": "revolute",
+			"origin_translation": [2, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 0
+			}
+		},
+
+
+		{
+			"name": "jointA_constraint11",
+			"parent": "link0",
+			"child": "linka_constraint11",
+			"type": "revolute",
+			"origin_translation": [0, 0, 1],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": 0,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "jointB_constraint11",
+			"parent": "link1",
+			"child": "linkb_constraint11",
+			"type": "revolute",
+			"origin_translation": [1, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -3.14,
+				"upper": 0
+			}
+		},
+
+		
+		{
+			"name": "jointA_constraint12",
+			"parent": "link0",
+			"child": "linka_constraint12",
+			"type": "revolute",
+			"origin_translation": [0, 0, -1],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": 0,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "jointB_constraint12",
+			"parent": "link1",
+			"child": "linkb_constraint12",
+			"type": "revolute",
+			"origin_translation": [1, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -3.14,
+				"upper": 0
+			}
+		}
+
+	],
+
+	"constraints": [
+		{
+			"name": "constraint2",
+			"type": "triangle-prismatic",
+			"jointL": "joint2",
+			"jointA": "jointA_constraint2",
+			"jointB": "jointB_constraint2",
+			"jointL_base_angle": "0",
+			"length": 1,
+			"limit": {
+				"lower": 1.3,
+				"upper": 2
+			}
+		},
+
+		{
+			"name": "constraint11",
+			"type": "triangle-prismatic",
+			"jointL": "joint1",
+			"jointA": "jointA_constraint11",
+			"jointB": "jointB_constraint11",
+			"jointL_base_angle": "1.57",
+			"length": 1.414,
+			"limit": {
+				"lower": 1,
+				"upper": 1.732
+			}
+		},
+
+		{
+			"name": "constraint12",
+			"type": "triangle-prismatic",
+			"jointL": "joint1",
+			"jointA": "jointA_constraint12",
+			"jointB": "jointB_constraint12",
+			"jointL_base_angle": "1.57",
+			"length": 1.414,
+			"limit": {
+				"lower": 1,
+				"upper": 1.732
+			}
+		}
+	]
+
+}
