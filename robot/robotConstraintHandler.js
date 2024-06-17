@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+// add 四连杆constraint
+
 function robotConstraintHandler(robot, robotModel, constraintName) {
 
 	// drive (Prismatic length change -> jointL angle change)
