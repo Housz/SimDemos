@@ -1,0 +1,155 @@
+{
+	"name": "机器人测试模型",
+	"links": [
+
+		{
+			"name": "lifting_base",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 4,
+					"y": 1,
+					"z": 2
+				},
+				"material": {
+					"color": [140, 80, 0]
+				}
+			}
+		},
+
+		{
+			"name": "arm",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 10,
+					"y": 0.5,
+					"z": 0.5
+				},
+				"material": {
+					"color": [210, 20, 0]
+				}
+			}
+		},
+
+		{
+			"name": "cylinder_tube",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.2,
+					"r2": 0.2,
+					"h": 1
+				},
+				"material": {
+					"color": [70, 70, 70]
+				}
+			}
+		},
+
+		{
+			"name": "piston_rod",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.1,
+					"r2": 0.1,
+					"h": 1
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		}
+
+	],
+
+	"joints": [
+
+		{
+			"name": "joint0",
+			"parent": "base_link",
+			"child": "lifting_base",
+			"type": "fixed",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+		
+		{
+			"name": "jointL",
+			"parent": "lifting_base",
+			"child": "arm",
+			"type": "revolute",
+			"origin_translation": [1, 0.5, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "jointA",
+			"parent": "lifting_base",
+			"child": "cylinder_tube",
+			"type": "revolute",
+			"origin_translation": [2.73, 0.5, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "jointB",
+			"parent": "arm",
+			"child": "piston_rod",
+			"type": "revolute",
+			"origin_translation": [2, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		}
+
+	],
+
+	"constraints": [
+
+		{
+			"name": "constraint0",
+			"type": "triangle-prismatic",
+			"jointL": "jointL",
+			"jointA": "jointA",
+			"jointB": "jointB",
+			"length": 1,
+			"limit": {
+				"lower": 1,
+				"upper": 2
+			}
+		}
+
+	]
+
+}
