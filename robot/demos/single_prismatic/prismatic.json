@@ -25,7 +25,7 @@
 			"origin_translation": [0, 0, 0],
 			"origin_orientation": [0, 0, 0],
 			"visual": {
-				"origin_translation": [0, 0, 0],
+				"origin_translation": [1, 0, 0],
 				"origin_orientation": [0, 0, 0],
 				"geometry": {
 					"type": "cylinder",
@@ -58,14 +58,6 @@
 	],
 
 	"joints": [
-		{
-			"name": "joint0",
-			"parent": "base_link",
-			"child": "link0",
-			"type": "fixed",
-			"origin_translation": [0, 0, 0],
-			"origin_orientation": [0, 0, 0]
-		},
 
 		{
 			"name": "joint1",

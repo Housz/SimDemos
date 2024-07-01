@@ -126,8 +126,8 @@ function robotCreator(robot) {
 
 		linkModel.geometry = result.geometry.clone();
 		linkModel.material = result.material.clone();
-		// linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
-		// linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+		linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
+		linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
 
 		// console.log(linkModel);
 
