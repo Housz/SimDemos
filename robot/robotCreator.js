@@ -123,11 +123,19 @@ function robotCreator(robot) {
 		// console.log(result.position);
 
 
+		// object.children[0].geometry.rotateX(-1.57);
 
 		linkModel.geometry = result.geometry.clone();
 		linkModel.material = result.material.clone();
-		linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
-		linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+		// Euler angle : X -> Y -> Z
+		linkModel.geometry.rotateX(visual_origin_orientation[0]);
+		linkModel.geometry.rotateY(visual_origin_orientation[1]);
+		linkModel.geometry.rotateZ(visual_origin_orientation[2]);
+		linkModel.geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+		// linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
+		// linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
 
 		// console.log(linkModel);
 
@@ -158,7 +166,7 @@ function robotCreator(robot) {
 	 */
 	// init jointL_base_angle
 	robot.constraints.forEach(constraint => {
-		
+
 		// let jointA = robot.jointMap.get(constraint.jointA);
 		let jointAModel = getChildByName(robotModel, constraint.jointA);
 
@@ -188,7 +196,7 @@ function robotCreator(robot) {
 
 		console.log(constraint.name);
 		console.log(constraint.jointL_base_angle);
-		
+
 	});
 
 	// robotConstraintHandler(robot, robotModel, null);
@@ -246,9 +254,9 @@ function createJointModel(joint) {
 	}
 
 	else if (joint.type == "revolute") {
-		
-		const geometry = new THREE.CylinderGeometry(.2, .2, .51, 16);
-		// const geometry = new THREE.CylinderGeometry(.0002, .0002, .0005, 16);
+
+		// const geometry = new THREE.CylinderGeometry(.2, .2, .51, 16);
+		const geometry = new THREE.CylinderGeometry(.0002, .0002, .0005, 16);
 		geometry.rotateZ(Math.PI / 2); // axis to [1, 0, 0]
 
 		let currAxis = new THREE.Vector3(1, 0, 0);
@@ -372,7 +380,7 @@ async function createLinkModel(link) {
 		const geometry = new THREE.BoxGeometry(x, y, z);
 		geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(x / 2, 0, 0));
 
-		geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+		// geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
 		// todo geometry rotation
 
 		const box = new THREE.Mesh(geometry, material);
@@ -417,28 +425,44 @@ async function createLinkModel(link) {
 
 		let meshURL = visual.geometry.url;
 
-		let meshScale = visual.geometry.scale;
+		// Check whether the url exists 
+		const response = await fetch(filePath, { method: 'HEAD' });
 
-		let [object] = await Promise.all([objloader.loadAsync(meshURL)]);
-		object.children[0].name = link.name;
-
-		let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
-		const material = new THREE.MeshPhongMaterial();
-		material.color = color;
-
-		object.children[0].material = material;
-
-		object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
-
-		object.children[0].geometry.rotateX(-1.57);
+		if (response.ok) {
 
 
-		// object.children[0].rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
-		// object.children[0].position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+			let [object] = await Promise.all([objloader.loadAsync(meshURL)]);
+			object.children[0].name = link.name;
 
-		object.children[0].isLink = true;
+			let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
+			const material = new THREE.MeshPhongMaterial();
+			material.color = color;
 
-		return object.children[0];
+			object.children[0].material = material;
+
+			if (visual.geometry.scale != null) {
+				let meshScale = visual.geometry.scale;
+				object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
+			}
+
+
+			// object.children[0].geometry.rotateX(-1.57);
+
+			// object.children[0].rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
+			// object.children[0].position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+			object.children[0].isLink = true;
+
+			return object.children[0];
+
+		}
+
+		else if (a) {
+
+		}
+		else {
+
+		}
 
 	}
 	else {

@@ -11,8 +11,8 @@
 				"origin_orientation": [0, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./forearm.obj",
-					"scale": [10, 10, 10]
+					"url": "./box123.obj",
+					"scale": [1, 1, 1]
 				},
 				"material": {
 					"color": [120, 10, 0]

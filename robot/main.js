@@ -115,7 +115,7 @@ let trajectoryCurve; // THREE.CatmullRomCurve3
 const ARC_SEGMENTS = 200;
 let lineMat = new THREE.LineBasicMaterial({ color: 0x008811 })
 const geometry = new THREE.BufferGeometry();
-geometry.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array( ARC_SEGMENTS * 3 ), 3 ) );
+geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ARC_SEGMENTS * 3), 3));
 
 let trajectoryLineMesh = new THREE.Line(
 	geometry,
@@ -143,10 +143,10 @@ function loadRobotJson(url) {
 	});
 }
 
-loadRobotJson(modelPath)
+// loadRobotJson(modelPath)
 // loadRobotJson("./robot.json")
-// loadRobotJson("./models/UR5/UR5.json")
-// loadRobotJson("./models/stanford/StanfordRRP.json")
+loadRobotJson("./models/UR5/UR5.json")
+	// loadRobotJson("./models/stanford/StanfordRRP.json")
 	.then(data => {
 
 		let robot = robotParser(data);
@@ -201,22 +201,25 @@ loadRobotJson(modelPath)
 	});
 
 
-function readFromText(robotJson){
+/**
+ * online upload customise json
+ */
+function readFromText(robotJson) {
 	console.log(robotJson);
 
 	scene.remove(robotModel);
 
 	let robot = robotParser(robotJson);
 
-		robotModel = robotCreator(robot);
+	robotModel = robotCreator(robot);
 
-		console.log("robotModel");
-		console.log(robotModel);
+	console.log("robotModel");
+	console.log(robotModel);
 
 
-		scene.add(robotModel);
+	scene.add(robotModel);
 
-		robotGUICreator(robot, robotModel);
+	robotGUICreator(robot, robotModel);
 }
 
 
@@ -225,7 +228,7 @@ function clearAllKeys() {
 	keyGroup.clear();
 	// console.log(trajectoryLineMesh.geometry.attributes.position);
 
-	trajectoryLineMesh.geometry.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array( ARC_SEGMENTS * 3 ), 3 ) );
+	trajectoryLineMesh.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ARC_SEGMENTS * 3), 3));
 
 }
 
@@ -243,7 +246,7 @@ function saveKeyPosition() {
 	if (keyGroup.children.length > 1) {
 		updateTrajectoryCurve();
 	}
-	
+
 }
 
 
@@ -263,11 +266,11 @@ function updateTrajectoryCurve() {
 
 	const position = trajectoryLineMesh.geometry.attributes.position;
 	let p = new THREE.Vector3();
-	for ( let i = 0; i < ARC_SEGMENTS; i ++ ) {
+	for (let i = 0; i < ARC_SEGMENTS; i++) {
 
-		const t = i / ( ARC_SEGMENTS - 1 );
-		trajectoryCurve.getPoint( t, p );
-		position.setXYZ( i, p.x, p.y, p.z );
+		const t = i / (ARC_SEGMENTS - 1);
+		trajectoryCurve.getPoint(t, p);
+		position.setXYZ(i, p.x, p.y, p.z);
 
 	}
 
@@ -308,7 +311,7 @@ function playTrajectory() {
 	// 	robotIKHandler(targetMesh, robotModel);
 
 	// }
-	
+
 }
 
 /////////////////////////////////// mesh} ///////////////////////////////////
