@@ -205,6 +205,185 @@ function robotCreator(robot) {
 
 }
 
+/**
+ * only for online test
+ */
+function robotCreatorWithObjText(robot, objTexts) {
+	
+	let robotModel = new THREE.Group(); // base_link
+	robotModel.name = robot.name;
+
+	let base_link = new THREE.Group();
+	base_link.name = "base_link";
+	robotModel.add(base_link);
+
+	// fixedJointModel.position.set();
+
+	/**
+	 * 1. build topology tree
+	 */
+
+	let linkModels = [];
+
+	robot.joints.forEach(joint => {
+
+
+		let jointModel = createJointModel(joint);
+
+		// 1. parent link
+		let parentLinkInRobot = getChildByName(robotModel, joint.parent);
+
+		if (parentLinkInRobot == null) {
+
+			let parentLinkModel = new THREE.Mesh();
+
+			parentLinkModel.isLink = true;
+
+			parentLinkModel.name = joint.parent;
+
+			parentLinkModel.add(jointModel);
+
+			robotModel.add(parentLinkModel);
+
+			linkModels.push(parentLinkModel);
+		}
+		else {
+			parentLinkInRobot.add(jointModel);
+		}
+
+
+		// 2. child link
+		let childLinkInRobot = getChildByName(robotModel, joint.child);
+		if (childLinkInRobot == null) {
+
+			let childLinkModel = new THREE.Mesh();
+			childLinkModel.isLink = true;
+
+			childLinkModel.name = joint.child;
+
+			jointModel.add(childLinkModel);
+
+			linkModels.push(childLinkModel);
+		}
+		else {
+			console.error("存在闭环：" + childLink.name);
+		}
+
+	});
+
+
+
+	linkModels.forEach(async linkModel => {
+
+		let linkName = linkModel.name;
+		let link = robot.linkMap.get(linkName);
+		let visual = link.visual;
+
+		let result;
+
+		if (link.visual.geometry.type != 'mesh') {
+			let LinkModelPromise = createLinkModel(link);
+			result = await LinkModelPromise;
+		}
+		else {
+			let meshURL = visual.geometry.url;
+			let meshObjText = objTexts[meshURL];
+			
+			let object = objloader.parse(meshObjText);
+			object.children[0].name = link.name;
+
+
+			let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
+			const material = new THREE.MeshPhongMaterial();
+			material.color = color;
+
+			object.children[0].material = material;
+
+			if (visual.geometry.scale != null) {
+				let meshScale = visual.geometry.scale;
+				object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
+			}
+			
+			object.children[0].isLink = true;
+
+			result = object.children[0];
+
+		}
+
+
+		// visual offset
+		let visual_origin_translation = visual.origin_translation;
+		let visual_origin_orientation = visual.origin_orientation;
+
+		// object.children[0].geometry.rotateX(-1.57);
+
+		linkModel.geometry = result.geometry.clone();
+		linkModel.material = result.material.clone();
+
+		// Euler angle : X -> Y -> Z
+		linkModel.geometry.rotateX(visual_origin_orientation[0]);
+		linkModel.geometry.rotateY(visual_origin_orientation[1]);
+		linkModel.geometry.rotateZ(visual_origin_orientation[2]);
+		linkModel.geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+		// linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
+		// linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+		// console.log(linkModel);
+
+		robotModel.updateWorldMatrix(true, true);
+
+		// robotModel.updateMatrixWorld(true);
+
+
+	});
+
+
+	/**
+	 * constraints init
+	 */
+	// init jointL_base_angle
+	robot.constraints.forEach(constraint => {
+
+		// let jointA = robot.jointMap.get(constraint.jointA);
+		let jointAModel = getChildByName(robotModel, constraint.jointA);
+
+		// let jointB = robot.jointMap.get(constraint.jointB);
+		let jointBModel = getChildByName(robotModel, constraint.jointB);
+
+		// let jointL = robot.jointMap.get(constraint.jointL);
+		let jointLModel = getChildByName(robotModel, constraint.jointL);
+
+
+		let A_world = new THREE.Vector3();
+		jointAModel.getWorldPosition(A_world);
+		// console.log(A_world);
+
+		let B_world = new THREE.Vector3();
+		jointBModel.getWorldPosition(B_world);
+
+		let L_world = new THREE.Vector3();
+		jointLModel.getWorldPosition(L_world);
+
+		let LB = new THREE.Vector3();
+		LB.subVectors(B_world, L_world);
+		let LA = new THREE.Vector3();
+		LA.subVectors(A_world, L_world);
+
+		constraint.jointL_base_angle = LA.angleTo(LB);
+
+		console.log(constraint.name);
+		console.log(constraint.jointL_base_angle);
+
+	});
+
+	// robotConstraintHandler(robot, robotModel, null);
+
+	return robotModel;
+
+}
+
+
 function getChildByName(object, childName) {
 
 	// console.log("--find--" + childName);
@@ -426,7 +605,7 @@ async function createLinkModel(link) {
 		let meshURL = visual.geometry.url;
 
 		// Check whether the url exists 
-		const response = await fetch(filePath, { method: 'HEAD' });
+		const response = await fetch(meshURL, { method: 'HEAD' });
 
 		if (response.ok) {
 
@@ -471,4 +650,6 @@ async function createLinkModel(link) {
 
 }
 
-export { robotCreator }
+
+
+export { robotCreator, robotCreatorWithObjText }

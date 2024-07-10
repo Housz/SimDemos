@@ -3,8 +3,9 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { robotConstraintHandler, updateAllConstraints } from './robotConstraintHandler.js'
 
 function robotGUICreator(robot, robotModel) {
+	
+	let gui = new GUI();
 
-	const gui = new GUI();
 
 	gui.title(robot.name);
 

@@ -4,7 +4,7 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 import { robotParser } from './robotParser.js';
-import { robotCreator } from './robotCreator.js';
+import { robotCreator, robotCreatorWithObjText } from './robotCreator.js';
 import { robotGUICreator } from './robotGUICreator.js';
 import { robotIKHandler } from './robotIKHandler.js'
 
@@ -106,6 +106,8 @@ transformControl.attach(targetMesh);
 
 let robotModel;
 
+let gui = new GUI();
+
 // for trajectory
 let keyGroup = new THREE.Group();
 scene.add(keyGroup);
@@ -143,9 +145,9 @@ function loadRobotJson(url) {
 	});
 }
 
-// loadRobotJson(modelPath)
+loadRobotJson(modelPath)
 // loadRobotJson("./robot.json")
-loadRobotJson("./models/UR5/UR5.json")
+// loadRobotJson("./models/UR5/UR5.json")
 	// loadRobotJson("./models/stanford/StanfordRRP.json")
 	.then(data => {
 
@@ -212,6 +214,7 @@ function readFromText(robotJson) {
 	let robot = robotParser(robotJson);
 
 	robotModel = robotCreator(robot);
+	// robotModel = robotCreatorWithObjText(robot, objTexts)
 
 	console.log("robotModel");
 	console.log(robotModel);
@@ -221,6 +224,28 @@ function readFromText(robotJson) {
 
 	robotGUICreator(robot, robotModel);
 }
+
+
+function readFromJSONandOBJ(robotJson, robotObjs) {
+	console.log(robotJson);
+
+	scene.remove(robotModel);
+
+	let robot = robotParser(robotJson);
+
+	// robotModel = robotCreator(robot);
+	robotModel = robotCreatorWithObjText(robot, robotObjs)
+
+	console.log("robotModel");
+	console.log(robotModel);
+
+
+	scene.add(robotModel);
+
+	robotGUICreator(robot, robotModel);
+}
+
+
 
 
 
@@ -371,4 +396,4 @@ requestAnimationFrame(render);
 //     readFromText();
 // }
 
-export { readFromText }
+export { readFromText, readFromJSONandOBJ }

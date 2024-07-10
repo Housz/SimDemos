@@ -11,7 +11,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/base.obj",
+					"url": "base.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {
@@ -29,7 +29,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/shoulder.obj",
+					"url": "shoulder.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {
@@ -47,7 +47,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/upperarm.obj",
+					"url": "upperarm.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {
@@ -65,7 +65,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/forearm.obj",
+					"url": "forearm.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {
@@ -83,7 +83,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/wrist1.obj",
+					"url": "wrist1.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {
@@ -101,7 +101,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/wrist2.obj",
+					"url": "wrist2.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {
@@ -119,7 +119,7 @@
 				"origin_orientation": [-1.57, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./models/UR5/wrist3.obj",
+					"url": "wrist3.obj",
 					"scale": [10, 10, 10]
 				},
 				"material": {

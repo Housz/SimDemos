@@ -26,13 +26,8 @@ function loadFile(event) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const json = JSON.parse(event.target.result);
-        displayContent(json);
+        readFromText(json);
     };
     reader.readAsText(file);
     // console.log(reader.readAsText(file));
-}
-
-function displayContent(json) {
-
-    readFromText(json);
 }
