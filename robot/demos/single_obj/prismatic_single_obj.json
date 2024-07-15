@@ -12,10 +12,10 @@
 					"type": "cylinder",
 					"r1": 0.2,
 					"r2": 0.2,
-					"h": 2
+					"h": 1
 				},
 				"material": {
-					"color": [0, 40, 120]
+					"color": [40, 40, 40]
 				}
 			}
 		},
@@ -25,7 +25,7 @@
 			"origin_translation": [0, 0, 0],
 			"origin_orientation": [0, 0, 0],
 			"visual": {
-				"origin_translation": [1, 0, 0],
+				"origin_translation": [0, 0, 0],
 				"origin_orientation": [0, 0, 0],
 				"geometry": {
 					"type": "cylinder",
@@ -34,7 +34,7 @@
 					"h": 2
 				},
 				"material": {
-					"color": [120, 10, 0]
+					"color": [120, 120, 120]
 				}
 			}
 		},
@@ -52,7 +52,7 @@
 					"scale": [1, 1, 1]
 				},
 				"material": {
-					"color": [120, 10, 0]
+					"color": [0, 120, 10]
 				}
 			}
 		}
@@ -69,17 +69,17 @@
 			"origin_orientation": [0, 0, 0],
 			"axis": [1, 0, 0],
 			"limit": {
-				"lower": -2,
-				"upper": 2
+				"lower": 0,
+				"upper": 1
 			}
 		},
-		
+
 		{
 			"name": "joint2",
 			"parent": "link1",
 			"child": "link_obj",
 			"type": "fixed",
-			"origin_translation": [0, 0, 0],
+			"origin_translation": [2.5, 0, 0],
 			"origin_orientation": [0, 0, 0]
 		}
 	],

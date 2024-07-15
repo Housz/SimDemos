@@ -11,11 +11,11 @@
 				"origin_orientation": [0, 0, 0],
 				"geometry": {
 					"type": "mesh",
-					"url": "./box123.obj",
+					"url": "box123.obj",
 					"scale": [1, 1, 1]
 				},
 				"material": {
-					"color": [120, 10, 0]
+					"color": [0, 120, 10]
 				}
 			}
 		}
