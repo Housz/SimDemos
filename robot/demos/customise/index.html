@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,11 +33,11 @@
     </style>
     <canvas id="c"></canvas>
 </head>
-
 <body>
+    
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">上传机器人文件&#128070;</button>
+    <input type="file" id="fileInput" multiple>
 
-    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Robot File</button>
-    <input type="file" id="fileInput" style="display: none;" accept=".json">
 
     <script type="importmap">
         {
@@ -49,16 +48,11 @@
         }
     </script>
 
-    <script> let modelPath = './test.json' </script>
 
+    <script> let modelPath = './test.json' </script>
 
     <script type="module" src="../../main.js"></script>
 
-    <script type="module" src="./script.js"></script>
-
-
-
-
+    <script type="module" src="./script_.js"></script>
 </body>
-
 </html>
