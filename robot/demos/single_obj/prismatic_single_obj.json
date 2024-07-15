@@ -1,0 +1,90 @@
+{
+	"name": "机器人测试模型",
+	"links": [
+		{
+			"name": "link0",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.2,
+					"r2": 0.2,
+					"h": 2
+				},
+				"material": {
+					"color": [0, 40, 120]
+				}
+			}
+		},
+		
+		{
+			"name": "link1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [1, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.1,
+					"r2": 0.1,
+					"h": 2
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link_obj",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "box123.obj",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [120, 10, 0]
+				}
+			}
+		}
+	],
+
+	"joints": [
+
+		{
+			"name": "joint1",
+			"parent": "link0",
+			"child": "link1",
+			"type": "prismatic",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [1, 0, 0],
+			"limit": {
+				"lower": -2,
+				"upper": 2
+			}
+		},
+		
+		{
+			"name": "joint2",
+			"parent": "link1",
+			"child": "link_obj",
+			"type": "fixed",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		}
+	],
+
+	"constraints": [
+	]
+
+}
