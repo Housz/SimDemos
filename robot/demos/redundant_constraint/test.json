@@ -151,8 +151,9 @@
 		},
 
 		{
-			"name": "constraint-four-bar",
-			"type": "four-bar"
+			"name": "",
+			"type": "redundant",
+
 		}
 
 	]

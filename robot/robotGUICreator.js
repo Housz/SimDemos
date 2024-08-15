@@ -99,6 +99,7 @@ function robotGUICreator(robot, robotModel) {
 
 		else if(joint.type == "fixed"){
 			
+			// robot world trans and rotate
 			if (joint.parent != "base_link") {
 				return;
 			}
@@ -152,7 +153,7 @@ function robotGUICreator(robot, robotModel) {
 
 		}
 		else {
-			// todo
+			// TODO: other types of joints
 		}
 
 	});
@@ -161,6 +162,7 @@ function robotGUICreator(robot, robotModel) {
 
 		if (constraint.type == "triangle-prismatic") {
 			
+			// initialization constraints 
 			robotConstraintHandler(robot, robotModel, constraint.name);
 
 			let folder = gui.addFolder(constraint.name + " (prismatic)");
@@ -176,6 +178,7 @@ function robotGUICreator(robot, robotModel) {
 
 				constraint.length = value;
 				
+				// satisfy constraint on each UI update
 				robotConstraintHandler(robot, robotModel, constraint.name);
 
 			});

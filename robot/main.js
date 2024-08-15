@@ -37,7 +37,7 @@ scene.fog = new THREE.Fog(0xa0a0a0, 10, 200);
 // camera.position.set( 0, 250, 1000 );
 // scene.add( camera );
 
-scene.add(new THREE.AmbientLight(0xf0f0f0, 3));
+scene.add(new THREE.AmbientLight(0xdddddd, 3));
 const light = new THREE.SpotLight(0xffffff, 2);
 light.position.set(200, 200, 50);
 light.angle = Math.PI * 0.2;
@@ -51,7 +51,7 @@ light.shadow.mapSize.height = 1024;
 // scene.add(light);
 
 const dlight = new THREE.DirectionalLight(0xeeeeee, 3);
-dlight.position.set(- 1, 2, 4);
+dlight.position.set(5, 2, 4);
 scene.add(dlight);
 
 // const planeGeometry = new THREE.PlaneGeometry(2000, 2000);

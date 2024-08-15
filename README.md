@@ -13,6 +13,8 @@ just for fun :)
 
 [Simple numerical](3.SimpleNumerical\index.html)
 
+[Pendulum3d PBD](4.Pendulum3dPBD/index.html)
+
 # Three.js Demos
 
 [Random Color for Instanced Mesh](ThreeJS/randomcolor/index.html)

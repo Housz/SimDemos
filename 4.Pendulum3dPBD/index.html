@@ -1,0 +1,54 @@
+<!--
+Copyright Shengzhe Hou
+Housz@sdust.edu.cn
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pendulum 3D</title>
+</head>
+
+<style>
+    body {
+        font-family: verdana;
+        font-size: 15px;
+    }
+
+    .button {
+        background-color: #606060;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <h1>Pendulum 3D</h1>
+
+	<p>
+        dt: 1/60 &nbsp&nbsp
+        sub-steps:
+        <input type="range" min="0" max="5" value="5" id="stepsSlider" class="slider"> <span id="steps">100000</span>
+    </p>
+    <div id="container"></div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+          }
+        }
+    </script>
+
+
+	<script type="module" src="./script.js"></script>
+
+</body>
+
+</html>
