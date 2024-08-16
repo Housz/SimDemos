@@ -9,7 +9,7 @@ const G = 10;
 
 var Ball = 
 {
-    x: 0,
+    x: 0 + 800 / 2,
     y: 0,
     vx: 0,
     vy: 0,
