@@ -168,8 +168,9 @@
 				}
 
 				// Update mesh position
-				// this.mesh.position.copy(this.position);
+
 				let matrix = new THREE.Matrix4();
+				matrix.makeScale(this.width, this.height, this.depth);
 				matrix.setPosition(this.position);
 				instancedMesh.setMatrixAt(this.id, matrix);
 				instancedMesh.instanceMatrix.needsUpdate = true;
@@ -551,8 +552,13 @@
 
 
 		/*************instancedMesh****************/
-		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-		const material = new THREE.MeshStandardMaterial();
+		const geometry = new THREE.BoxGeometry(1, 1, 1);
+		const material = new THREE.MeshStandardMaterial({
+			roughness: 0.5,
+			metalness: 0.2,
+			emissive: 0x002200,
+			emissiveIntensity: 0.1
+		});
 		instancedMesh = new THREE.InstancedMesh(geometry, material, BOX_COUNT);
 		instancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 		instancedMesh.castShadow = true;
@@ -560,6 +566,7 @@
 
 		let matrix = new THREE.Matrix4();
 		for (let i = 0; i < BOX_COUNT; i++) {
+			matrix.makeScale(boxes[i].width, boxes[i].height, boxes[i].depth);
 			matrix.setPosition(boxes[i].position);
 			instancedMesh.setMatrixAt(i, matrix);
 			instancedMesh.setColorAt(i, new THREE.Color(0x00ff00));
