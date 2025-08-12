@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #c {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+    <style>
+        .upload-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+    <canvas id="c"></canvas>
+</head>
+
+<body>
+    <!-- 
+    <h1>Upload JSON File</h1>
+    <input type="file" id="fileInput" accept=".json">
+    <button onclick="readJsonFile()">Upload and Read JSON</button>
+    <pre id="jsonOutput"></pre> -->
+
+    <!-- <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload JSON</button>
+    <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="loadFile(event)">
+    <div id="content"></div> -->
+
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Robot File</button>
+    <input type="file" id="fileInput" style="display: none;" accept=".json">
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+          }
+        }
+    </script>
+
+    <!-- <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.143.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.143.0/examples/jsm/"
+          }
+        }
+    </script> -->
+
+    <script> let modelPath = './roadheader.json' </script>
+
+
+    <script type="module" src="../../main.js"></script>
+
+    <script type="module" src="./script.js"></script>
+
+
+
+
+</body>
+
+</html>

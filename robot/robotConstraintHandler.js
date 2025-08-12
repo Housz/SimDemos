@@ -35,6 +35,8 @@ function robotConstraintHandler(robot, robotModel, constraintName) {
 		// let jointL_base_angle = dirveConstraint.jointL_base_angle;
 		// let jointL_base_angle = 
 
+		// console.log("a:", a, "b:", b, "l:", l);
+		
 		let angleL = computeAngle(a, b, l);
 		// angleL -= jointL_base_angle;
 		angleL -= dirveConstraint.jointL_base_angle;
@@ -115,10 +117,16 @@ function updateAllConstraints(robot, robotModel) {
 		rotationAxis = new THREE.Vector3();
 		rotationAxis.crossVectors(currAxis, targetAxis);
 		rotationAxis.normalize();
+
+		// console.log("-----");
+		// console.log(rotationAxis, rotationAngle);
+
 		jointBModel.rotateOnAxis(rotationAxis, rotationAngle);
 
 
 	});
+
+	robotModel.updateWorldMatrix(true, true);
 }
 
 
@@ -155,6 +163,9 @@ function getChildByName(object, childName) {
 }
 
 function updateRevoluteAngle(joint, jointModel, angle) {
+
+	// console.log(joint);
+	
 
 	if (joint.axis.x) {
 		jointModel.rotation.set(angle, 0, 0);

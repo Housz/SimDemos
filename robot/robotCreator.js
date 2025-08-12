@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { robotConstraintHandler } from './robotConstraintHandler.js'
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
+
 const objloader = new OBJLoader();
 
 
@@ -114,34 +115,78 @@ function robotCreator(robot) {
 
 		let visual = link.visual;
 
-		// visual offset
+		// // visual offset
 		let visual_origin_translation = visual.origin_translation;
 		let visual_origin_orientation = visual.origin_orientation;
 
-		// console.log(result);
-		// console.log(result.rotation);
-		// console.log(result.position);
+		// // console.log(result);
+		// // console.log(result.rotation);
+		// // console.log(result.position);
 
 
-		// object.children[0].geometry.rotateX(-1.57);
+		// // object.children[0].geometry.rotateX(-1.57);
 
-		linkModel.geometry = result.geometry.clone();
-		linkModel.material = result.material.clone();
+		// linkModel.geometry = result.geometry.clone();
+		// linkModel.material = result.material.clone();
 
-		// Euler angle : X -> Y -> Z
-		linkModel.geometry.rotateX(visual_origin_orientation[0]);
-		linkModel.geometry.rotateY(visual_origin_orientation[1]);
-		linkModel.geometry.rotateZ(visual_origin_orientation[2]);
-		linkModel.geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+		// // Euler angle : X -> Y -> Z
+		// linkModel.geometry.rotateX(visual_origin_orientation[0]);
+		// linkModel.geometry.rotateY(visual_origin_orientation[1]);
+		// linkModel.geometry.rotateZ(visual_origin_orientation[2]);
+		// linkModel.geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
 
-		// linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
-		// linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+		// // linkModel.rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
+		// // linkModel.position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
 
-		// console.log(linkModel);
+		// // console.log(linkModel);
 
-		robotModel.updateWorldMatrix(true, true);
+		// robotModel.updateWorldMatrix(true, true);
+
+
+		// if (result.children > 0) {
+
+		// }
+
+		if (result.children.length === 0) {
+			linkModel.geometry = result.geometry.clone();
+			linkModel.material = result.material.clone();
+		}
+
+		if (result.children.length > 0) {
+			result.children.forEach(child => {
+				// console.log(child);
+
+				let tempModel = new THREE.Mesh();
+				child.geometry.rotateX( - Math.PI / 2);
+
+				child.geometry.rotateX(visual_origin_orientation[0]);
+				child.geometry.rotateY(visual_origin_orientation[1]);
+				child.geometry.rotateZ(visual_origin_orientation[2]);
+				// console.log(visual_origin_translation);
+				
+				child.geometry.translate(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+				tempModel.geometry = child.geometry.clone();
+				tempModel.material = child.material.clone();
+
+				tempModel.castShadow = true;
+
+				linkModel.add(tempModel);
+			});
+		}
+
+
+
 
 		// robotModel.updateMatrixWorld(true);
+
+
+
+		// linkModel = result;
+
+		// console.log(result);
+		// console.log(linkModel);
+
 
 
 	});
@@ -209,7 +254,7 @@ function robotCreator(robot) {
  * only for online test
  */
 function robotCreatorWithObjText(robot, objTexts) {
-	
+
 	let robotModel = new THREE.Group(); // base_link
 	robotModel.name = robot.name;
 
@@ -288,13 +333,18 @@ function robotCreatorWithObjText(robot, objTexts) {
 		else {
 			let meshURL = visual.geometry.url;
 			let meshObjText = objTexts[meshURL];
-			
+
 			let object = objloader.parse(meshObjText);
 			object.children[0].name = link.name;
 
 
 			let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
-			const material = new THREE.MeshPhongMaterial();
+			// const material = new THREE.MeshPhongMaterial();
+			const material = new THREE.MeshStandardMaterial({
+				metalness: 0.0,
+				roughness: 0.5,
+				envMapIntensity: 1.5
+			});
 			material.color = color;
 
 			object.children[0].material = material;
@@ -303,7 +353,7 @@ function robotCreatorWithObjText(robot, objTexts) {
 				let meshScale = visual.geometry.scale;
 				object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
 			}
-			
+
 			object.children[0].isLink = true;
 
 			result = object.children[0];
@@ -454,7 +504,8 @@ function createJointModel(joint) {
 		mat4.makeRotationAxis(rotationAxis, rotationAngle);
 
 		geometry.applyMatrix4(mat4);
-		const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.7 });
+		// const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.7 });
+		const material = new THREE.MeshStandardMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.7 });
 		const cylinder = new THREE.Mesh(geometry, material);
 		cylinder.castShadow = true;
 
@@ -495,7 +546,8 @@ function createJointModel(joint) {
 		mat4.makeRotationAxis(rotationAxis, rotationAngle);
 
 		geometry.applyMatrix4(mat4);
-		const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, transparent: true, opacity: 0. });
+		// const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, transparent: true, opacity: 0. });
+		const material = new THREE.MeshStandardMaterial({ color: 0xeeeeee, transparent: true, opacity: 0. });
 		const cylinder = new THREE.Mesh(geometry, material);
 		cylinder.castShadow = true;
 
@@ -519,7 +571,8 @@ function createJointModel(joint) {
 	else {
 		// todo
 		const geometry = new THREE.CylinderGeometry(.2, .2, .5, 16);
-		const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee });
+		// const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee });
+		const material = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
 		const cylinder = new THREE.Mesh(geometry, material);
 		cylinder.rotateZ(Math.PI / 2);
 		cylinder.castShadow = true;
@@ -549,7 +602,8 @@ async function createLinkModel(link) {
 
 		// material
 		let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
-		const material = new THREE.MeshPhongMaterial();
+		// const material = new THREE.MeshPhongMaterial();
+		const material = new THREE.MeshStandardMaterial();
 		material.color = color;
 		if (visual.material.opacity) {
 			material.transparent = true;
@@ -584,7 +638,8 @@ async function createLinkModel(link) {
 
 		// material
 		let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
-		const material = new THREE.MeshPhongMaterial();
+		// const material = new THREE.MeshPhongMaterial();
+		const material = new THREE.MeshStandardMaterial();
 		material.color = color;
 		if (visual.material.opacity) {
 			material.transparent = true;
@@ -610,29 +665,83 @@ async function createLinkModel(link) {
 		if (response.ok) {
 
 
-			let [object] = await Promise.all([objloader.loadAsync(meshURL)]);
-			object.children[0].name = link.name;
+			if (meshURL.endsWith('.obj')) {
+				let [object] = await Promise.all([objloader.loadAsync(meshURL)]);
+				object.children[0].name = link.name;
 
-			let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
-			const material = new THREE.MeshPhongMaterial();
-			material.color = color;
+				let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
+				// const material = new THREE.MeshPhongMaterial();
+				const material = new THREE.MeshStandardMaterial();
+				material.color = color;
 
-			object.children[0].material = material;
+				object.children[0].material = material;
 
-			if (visual.geometry.scale != null) {
-				let meshScale = visual.geometry.scale;
-				object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
+				if (visual.geometry.scale != null) {
+					let meshScale = visual.geometry.scale;
+					object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
+				}
+
+				object.children[0].isLink = true;
+				// object.children[0].castShadow = true;
+
+				console.log(object.children[0]);
+
+				return object.children[0];
+
+			} else if (meshURL.endsWith('.glb') || meshURL.endsWith('.gltf')) {
+				const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+				const gltfLoader = new GLTFLoader();
+				let gltf = await gltfLoader.loadAsync(meshURL);
+				let object = gltf.scene;
+
+				object.name = link.name;
+
+				// let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
+				// object.traverse(child => {
+				// 	if (child.isMesh) {
+				// 		child.material = new THREE.MeshPhongMaterial({ color: color });
+				// 	}
+				// });
+
+				if (visual.geometry.scale != null) {
+					let meshScale = visual.geometry.scale;
+					object.scale.set(meshScale[0], meshScale[1], meshScale[2]);
+				}
+
+				object.isLink = true;
+				// object.castShadow = true;
+
+				// object.rotation.x = -Math.PI / 2;
+
+
+				console.log(object);
+
+				return object;
 			}
 
+			// let [object] = await Promise.all([objloader.loadAsync(meshURL)]);
+			// object.children[0].name = link.name;
 
-			// object.children[0].geometry.rotateX(-1.57);
+			// let color = new THREE.Color(visual.material.color[0] / 255, visual.material.color[1] / 255, visual.material.color[2] / 255);
+			// const material = new THREE.MeshPhongMaterial();
+			// material.color = color;
 
-			// object.children[0].rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
-			// object.children[0].position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+			// object.children[0].material = material;
 
-			object.children[0].isLink = true;
+			// if (visual.geometry.scale != null) {
+			// 	let meshScale = visual.geometry.scale;
+			// 	object.children[0].geometry.scale(meshScale[0], meshScale[1], meshScale[2]);
+			// }
 
-			return object.children[0];
+
+			// // object.children[0].geometry.rotateX(-1.57);
+
+			// // object.children[0].rotation.set(visual_origin_orientation[0], visual_origin_orientation[1], visual_origin_orientation[2]);
+			// // object.children[0].position.set(visual_origin_translation[0], visual_origin_translation[1], visual_origin_translation[2]);
+
+			// object.children[0].isLink = true;
+
+			// return object.children[0];
 
 		}
 

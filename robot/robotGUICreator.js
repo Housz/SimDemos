@@ -5,7 +5,10 @@ import { robotConstraintHandler, updateAllConstraints } from './robotConstraintH
 function robotGUICreator(robot, robotModel) {
 	
 	let gui = new GUI();
-
+	gui.domElement.style.opacity = '0.8';
+	// Make GUI resizable
+	gui.domElement.style.resize = 'horizontal';
+	gui.domElement.style.overflow = 'auto';
 
 	gui.title(robot.name);
 

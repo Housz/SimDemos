@@ -1,0 +1,211 @@
+{
+	"name": "Stanford RRP Robot",
+	"links": [
+		{
+			"name": "world"
+		},
+
+		{
+			"name": "base_link",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": null
+		},
+
+		{
+			"name": "Stanford_base_link",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 1,
+					"y": 0.2,
+					"z": 1
+				},
+				"material": {
+					"color": [120, 20, 0]
+				}
+			}
+		},
+
+		{
+			"name": "link1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 0.2,
+					"y": 1.8,
+					"z": 0.2
+				},
+				"material": {
+					"color": [0, 20, 120]
+				}
+			}
+		},
+
+		{
+			"name": "link2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 1,
+					"y": 0.2,
+					"z": 0.2
+				},
+				"material": {
+					"color": [120, 20, 0]
+				}
+			}
+		},	
+
+		{
+			"name": "link3",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-0.2, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 0.4,
+					"y": 0.4,
+					"z": 1
+				},
+				"material": {
+					"color": [0, 20, 120]
+				}
+			}
+		},	
+
+		{
+			"name": "link4",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-0.1, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 0.2,
+					"y": 0.2,
+					"z": 4
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "end_effector",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-0.15, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 0.3,
+					"y": 0.3,
+					"z": 0.3
+				},
+				"material": {
+					"color": [120, 20, 0]
+				}
+			}
+		}
+
+
+	],
+
+	"joints": [
+		{
+			"name": "world_joint",
+			"parent": "world",
+			"child": "base_link",
+			"type": "fixed"
+		},
+
+		{
+			"name": "joint0",
+			"parent": "base_link",
+			"child": "Stanford_base_link",
+			"type": "fixed",
+			"origin_translation": [-0.5, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "base_link1_joint",
+			"parent": "Stanford_base_link",
+			"child": "link1",
+			"type": "fixed",
+			"origin_translation": [0.4, 1, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "link1_link2_joint",
+			"parent": "link1",
+			"child": "link2",
+			"type": "revolute",
+			"origin_translation": [0.1, 1, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "link2_link3_joint",
+			"parent": "link2",
+			"child": "link3",
+			"type": "revolute",
+			"origin_translation": [1, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [1, 0, 0],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "link3_link4_joint",
+			"parent": "link3",
+			"child": "link4",
+			"type": "prismatic",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -1.5,
+				"upper": 1.5
+			}
+		},
+
+		{
+			"name": "link4_endlink_joint",
+			"parent": "link4",
+			"child": "end_effector",
+			"type": "fixed",
+			"origin_translation": [0, 0, 2.15],
+			"origin_orientation": [0, 0, 0]
+		}
+	],
+
+	"constraints": []
+}

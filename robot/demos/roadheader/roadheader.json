@@ -1,0 +1,955 @@
+{
+	"name": "机器人测试模型",
+	"links": [
+
+		{
+			"name": "pivot",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "box",
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"material": {
+					"color": [10, 140, 0]
+				}
+			}
+		},
+
+		{
+			"name": "roadheader_base",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "base.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [10, 140, 0]
+				}
+			}
+		},
+
+
+
+		{
+			"name": "huizhuanzhongxin",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, -1.425, 0.870],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "huizhuanzhongxin.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [210, 20, 0]
+				}
+			}
+		},
+
+		{
+			"name": "huizhuanshensuotong1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-1.914, -1.360, 1.188],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 1.3
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "huizhuanyougang1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-0.150, -1.359, 1.494],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 1.3
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "huizhuanshensuotong2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-1.914, -1.360, 1.188],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 1.3
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "huizhuanyougang2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-0.150, -1.359, 1.494],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 1.3
+				},
+				"material": {
+					"color": [120, 120, 120]
+				} 
+			}
+		},
+
+		{
+			"name": "jiegedianji",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0.783, -1.531, 0.842],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "jiegedianji.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [210, 20, 0]
+				}
+			}
+		},
+
+		{
+			"name": "shengjiangshensuotong1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 1.3
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "shengjiangyougang1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 1.3
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "shengjiangshensuotong2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 1.3
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "shengjiangyougang2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 1.3
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "shengjiangyeyagangluomu",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.08,
+					"r2": 0.08,
+					"h": 1.4
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "huajianzhou",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0.783, -1.531, 0.842],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "huajianzhou.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "jiegetou",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0.783, -1.53, 0.842],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "jiegetou.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "chanban",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [1.086, -0.076, 0.853],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "chanban.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "xinglun",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [1.086, -0.076, 0.853],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "xinglun.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "chanbanshensuotong1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 0.5
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "chanbanyougang1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 0.5
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "chanbanshensuotong2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 0.5
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "chanbanyougang2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 0.5
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "houzhicheng",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [-3.419, -0.100, 0.833],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "mesh",
+					"url": "houzhicheng.glb",
+					"scale": [1, 1, 1]
+				},
+				"material": {
+					"color": [80, 80, 80]
+				}
+			}
+		},
+
+		{
+			"name": "houzhichengshensuotong1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 0.5
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "houzhichengyougang1",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 0.5
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		},
+
+		{
+			"name": "houzhichengshensuotong2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.07,
+					"r2": 0.07,
+					"h": 0.5
+				},
+				"material": {
+					"color": [209, 40, 10]
+				}
+			}
+		},
+
+		{
+			"name": "houzhichengyougang2",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"visual": {
+				"origin_translation": [0, 0, 0],
+				"origin_orientation": [0, 0, 0],
+				"geometry": {
+					"type": "cylinder",
+					"r1": 0.03,
+					"r2": 0.03,
+					"h": 0.5
+				},
+				"material": {
+					"color": [120, 120, 120]
+				}
+			}
+		}
+
+
+	],
+
+	"joints": [
+
+		{
+			"name": "joint0",
+			"parent": "base_link",
+			"child": "pivot",
+			"type": "fixed",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "joint1",
+			"parent": "pivot",
+			"child": "roadheader_base",
+			"type": "fixed",
+			"origin_translation": [-0.391, 0.350, 0.864],
+			"origin_orientation": [0, 0, 0]
+		},
+
+		{
+			"name": "joint_base_huizhuanzhongxin",
+			"parent": "roadheader_base",
+			"child": "huizhuanzhongxin",
+			"type": "revolute",
+			"origin_translation": [0, 1.425, -0.870],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint_huizhuanzhongxin_huizhuanyougang1",
+			"parent": "huizhuanzhongxin",
+			"child": "huizhuanyougang1",
+			"type": "revolute",
+			"origin_translation": [0.149999794359777, 0, -0.629999026818315],
+			"origin_orientation": [0, 0.17, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_base_huizhuanshensuotong1",
+			"parent": "roadheader_base",
+			"child": "huizhuanshensuotong1",
+			"type": "revolute",
+			"origin_translation": [1.914, 1.360, -1.188],
+			"origin_orientation": [0, 0.17, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_huizhuanzhongxin_huizhuanyougang2",
+			"parent": "huizhuanzhongxin",
+			"child": "huizhuanyougang2",
+			"type": "revolute",
+			"origin_translation": [0.149999794359777, 0, 0.629999026818315],
+			"origin_orientation": [0, 0.17, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_base_huizhuanshensuotong2",
+			"parent": "roadheader_base",
+			"child": "huizhuanshensuotong2",
+			"type": "revolute",
+			"origin_translation": [1.914, 1.360, -0.54],
+			"origin_orientation": [0, 0.17, 0],
+			"axis": [0, 1, 0],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_huizhuanzhongxin_jiegedianji",
+			"parent": "huizhuanzhongxin",
+			"child": "jiegedianji",
+			"type": "revolute",
+			"origin_translation": [-0.783, 0.107, 0.028],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_jiegedianji_shengjiangyougang1",
+			"parent": "jiegedianji",
+			"child": "shengjiangyougang1",
+			"type": "revolute",
+			"origin_translation": [-1.7, 0.1, 0.485],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_huizhuanzhongxin_shengjiangshensuotong1",
+			"parent": "huizhuanzhongxin",
+			"child": "shengjiangshensuotong1",
+			"type": "revolute",
+			"origin_translation": [-1.08, -0.4, 0.485],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_jiegedianji_shengjiangyougang2",
+			"parent": "jiegedianji",
+			"child": "shengjiangyougang2",
+			"type": "revolute",
+			"origin_translation": [-1.7, 0.1, -0.485],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_huizhuanzhongxin_shengjiangshensuotong2",
+			"parent": "huizhuanzhongxin",
+			"child": "shengjiangshensuotong2",
+			"type": "revolute",
+			"origin_translation": [-1.08, -0.4, -0.485],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_jiegedianji_shengjiangyeyagangluomu",
+			"parent": "jiegedianji",
+			"child": "shengjiangyeyagangluomu",
+			"type": "fixed",
+			"origin_translation": [-1.7, 0.1, 0.685],
+			"origin_orientation": [0, 1.57, 0]
+		},
+
+		{
+			"name": "joint_jiegedianji_huajianzhou",
+			"parent": "jiegedianji",
+			"child": "huajianzhou",
+			"type": "prismatic",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [1, 0, 0],
+			"limit": {
+				"lower": -0.42,
+				"upper": 0.1
+			}
+		},
+
+		{
+			"name": "joint_huajianzhou_jiegetou",
+			"parent": "huajianzhou",
+			"child": "jiegetou",
+			"type": "revolute",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0],
+			"axis": [1, 0, 0],
+			"limit": {
+				"lower": -2,
+				"upper": 2
+			}
+		},
+		
+		{
+			"name": "joint_base_chanban",
+			"parent": "roadheader_base",
+			"child": "chanban",
+			"type": "revolute",
+			"origin_translation": [-1.086, 0.076, -0.853],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint_base_chanbanshensuotong1",
+			"parent": "roadheader_base",
+			"child": "chanbanshensuotong1",
+			"type": "revolute",
+			"origin_translation": [-0.65, 0.765, -0.385],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_chanban_chanbanyougang1",
+			"parent": "chanban",
+			"child": "chanbanyougang1",
+			"type": "revolute",
+			"origin_translation": [-0.35, 0.42, 0.46],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_base_chanbanshensuotong2",
+			"parent": "roadheader_base",
+			"child": "chanbanshensuotong2",
+			"type": "revolute",
+			"origin_translation": [-0.65, 0.765, -1.34],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_chanban_chanbanyougang2",
+			"parent": "chanban",
+			"child": "chanbanyougang2",
+			"type": "revolute",
+			"origin_translation": [-0.35, 0.42, -0.46],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_chanban_xinglun",
+			"parent": "chanban",
+			"child": "xinglun",
+			"type": "fixed",
+			"origin_translation": [0, 0, 0],
+			"origin_orientation": [0, 0, 0]
+		},
+		
+		{
+			"name": "joint_base_houzhicheng",
+			"parent": "roadheader_base",
+			"child": "houzhicheng",
+			"type": "revolute",
+			"origin_translation": [3.419, 0.100, -0.833],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -1.57,
+				"upper": 1.57
+			}
+		},
+
+		{
+			"name": "joint_base_houzhichengshensuotong1",
+			"parent": "roadheader_base",
+			"child": "houzhichengshensuotong1",
+			"type": "revolute",
+			"origin_translation": [3.56, 0.45, 0.2],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_houzhicheng_houzhichengyougang1",
+			"parent": "houzhicheng",
+			"child": "houzhichengyougang1",
+			"type": "revolute",
+			"origin_translation": [0.95, 0.27, 1.03],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_base_houzhichengshensuotong2",
+			"parent": "roadheader_base",
+			"child": "houzhichengshensuotong2",
+			"type": "revolute",
+			"origin_translation": [3.56, 0.45, -1.93],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		},
+
+		{
+			"name": "joint_houzhicheng_houzhichengyougang2",
+			"parent": "houzhicheng",
+			"child": "houzhichengyougang2",
+			"type": "revolute",
+			"origin_translation": [0.95, 0.27, -1.1],
+			"origin_orientation": [0, 0, 0],
+			"axis": [0, 0, 1],
+			"limit": {
+				"lower": -3.14,
+				"upper": 3.14
+			}
+		}
+
+
+
+	],
+
+	"constraints": [
+
+		{
+			"name": "constraint_base_huizhuanzhongxin1",
+			"type": "triangle-prismatic",
+			"jointL": "joint_base_huizhuanzhongxin",
+			"jointA": "joint_huizhuanzhongxin_huizhuanyougang1",
+			"jointB": "joint_base_huizhuanshensuotong1",
+			"length": 1.8,
+			"limit": {
+				"lower": 1.5,
+				"upper": 2.1
+			}
+		},
+
+		{
+			"name": "constraint_base_huizhuanzhongxin2",
+			"type": "triangle-prismatic",
+			"jointL": "joint_base_huizhuanzhongxin",
+			"jointA": "joint_huizhuanzhongxin_huizhuanyougang2",
+			"jointB": "joint_base_huizhuanshensuotong2",
+			"length": 1.8,
+			"limit": {
+				"lower": 1.5,
+				"upper": 2.1
+			}
+		},
+
+		{
+			"name": "constraint_huizhuanzhongxin_jiegedianji1",
+			"type": "triangle-prismatic",
+			"jointL": "joint_huizhuanzhongxin_jiegedianji",
+			"jointA": "joint_jiegedianji_shengjiangyougang1",
+			"jointB": "joint_huizhuanzhongxin_shengjiangshensuotong1",
+			"length": 1.5,
+			"limit": {
+				"lower": 1.2,
+				"upper": 1.8
+			}
+		},
+
+		{
+			"name": "constraint_huizhuanzhongxin_jiegedianji2",
+			"type": "triangle-prismatic",
+			"jointL": "joint_huizhuanzhongxin_jiegedianji",
+			"jointA": "joint_jiegedianji_shengjiangyougang2",
+			"jointB": "joint_huizhuanzhongxin_shengjiangshensuotong2",
+			"length": 1.5,
+			"limit": {
+				"lower": 1.2,
+				"upper": 1.8
+			}
+		},
+
+		{
+			"name": "constraint_base_chanban1",
+			"type": "triangle-prismatic",
+			"jointL": "joint_base_chanban",
+			"jointA": "joint_chanban_chanbanyougang1",
+			"jointB": "joint_base_chanbanshensuotong1",
+			"length": 0.7,
+			"limit": {
+				"lower": 0.6,
+				"upper": 0.8
+			}
+		},
+
+		{
+			"name": "constraint_base_chanban2",
+			"type": "triangle-prismatic",
+			"jointL": "joint_base_chanban",
+			"jointA": "joint_chanban_chanbanyougang2",
+			"jointB": "joint_base_chanbanshensuotong2",
+			"length": 0.7,
+			"limit": {
+				"lower": 0.6,
+				"upper": 0.8
+			}
+		},
+
+		{
+			"name": "constraint_base_houzhicheng1",
+			"type": "triangle-prismatic",
+			"jointL": "joint_base_houzhicheng",
+			"jointA": "joint_houzhicheng_houzhichengyougang1",
+			"jointB": "joint_base_houzhichengshensuotong1",
+			"length": 0.7,
+			"limit": {
+				"lower": 0.35,
+				"upper": 0.8
+			}
+		},
+
+		{
+			"name": "constraint_base_houzhicheng2",
+			"type": "triangle-prismatic",
+			"jointL": "joint_base_houzhicheng",
+			"jointA": "joint_houzhicheng_houzhichengyougang2",
+			"jointB": "joint_base_houzhichengshensuotong2",
+			"length": 0.7,
+			"limit": {
+				"lower": 0.35,
+				"upper": 0.8
+			}
+		}
+
+
+	]
+
+}
