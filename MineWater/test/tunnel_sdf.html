@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>交互式隧道水流模拟 (完整方案)</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #111; color: #fff; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            font-family: monospace;
+            z-index: 100;
+        }
+        /* -- lil-gui 样式 -- */
+        .lil-gui { 
+            z-index: 1000 !important; 
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        交互式 1D-3D 水流模拟<br/>
+        请使用右上角的UI面板控制模拟
+    </div>
+    <div id="container"></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/",
+                "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.19.1/dist/lil-gui.esm.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GUI } from 'lil-gui';
+
+        let camera, scene, renderer, controls;
+        let material;
+        let clock = new THREE.Clock();
+        let startTime = Date.now();
+        
+        // --- 第 2 部分: 物理引擎 ---
+
+        // 1. 物理网络定义 (拓扑)
+        const NODES = [
+            { id: 0, pos: new THREE.Vector3(-15, 5, 0), base_elevation: 5.0, junction_area: 15.0 }, // 0: 源 (高处)
+            { id: 1, pos: new THREE.Vector3(0, 0, 0), base_elevation: 0.0, junction_area: 15.0 },  // 1: Y 型接缝
+            { id: 2, pos: new THREE.Vector3(15, 0, 0), base_elevation: 0.0, junction_area: 15.0 },  // 2: 汇 (出口)
+            { id: 3, pos: new THREE.Vector3(0, 0, 15), base_elevation: -2.0, junction_area: 15.0 } // 3: 汇 (低处出口)
+        ];
+        const NUM_NODES = NODES.length;
+
+        const PIPES = [
+            { id: 0, nodeA: 0, nodeB: 1, C_friction: 5.0 },
+            { id: 1, nodeA: 1, nodeB: 2, C_friction: 5.0 },
+            { id: 2, nodeA: 1, nodeB: 3, C_friction: 5.0 }
+        ];
+
+        // 2. 物理状态 (动态)
+        let nodeState, pipeState; // 将在 initPhysicsState 中初始化
+        
+        // --- 交互 UI 参数 ---
+        const simParams = {
+            inflow: 12.0,       // (m³/s)
+            drainCoeff2: 5.0,   // (m³/s / m_head)
+            drainCoeff3: 5.0,   // (m³/s / m_head)
+            reset: () => initPhysicsState() // 重置函数
+        };
+
+        const FIXED_DT = 0.016; 
+        let accumulator = 0.0;
+        
+        /**
+         * 初始化/重置物理状态
+         */
+        function initPhysicsState() {
+            nodeState = NODES.map(node => ({
+                h: 1.0, // 初始水位 (相对基准面)
+                volume: node.junction_area * 1.0 // 初始储水量
+            }));
+            pipeState = PIPES.map(pipe => ({ Q: 0.0 }));
+            accumulator = 0.0; // 重置时间累加器
+        }
+        
+        /**
+         * 核心：物理模拟更新 (储罐-管道模型)
+         */
+        function updatePhysics(dt) {
+            let pipeFlows = [];
+            for(let i = 0; i < PIPES.length; i++) {
+                const pipe = PIPES[i];
+                const nodeA = NODES[pipe.nodeA];
+                const stateA = nodeState[pipe.nodeA];
+                const nodeB = NODES[pipe.nodeB];
+                const stateB = nodeState[pipe.nodeB];
+
+                const headA = nodeA.base_elevation + stateA.h;
+                const headB = nodeB.base_elevation + stateB.h;
+                const deltaHead = headA - headB;
+                
+                const flow = pipe.C_friction * Math.sign(deltaHead) * Math.sqrt(Math.abs(deltaHead));
+                
+                pipeState[i].Q = flow;
+                pipeFlows.push(flow);
+            }
+
+            let netFlows = new Array(NODES.length).fill(0.0);
+            for(let i = 0; i < PIPES.length; i++) {
+                const pipe = PIPES[i];
+                const flow = pipeFlows[i];
+                netFlows[pipe.nodeA] -= flow;
+                netFlows[pipe.nodeB] += flow;
+            }
+
+            // --- 边界条件 (由 UI 控制) ---
+            netFlows[0] += simParams.inflow; 
+            netFlows[2] -= Math.max(0, nodeState[2].h * simParams.drainCoeff2); 
+            netFlows[3] -= Math.max(0, nodeState[3].h * simParams.drainCoeff3); 
+
+            for(let i = 0; i < NODES.length; i++) {
+                const node = NODES[i];
+                const state = nodeState[i];
+                state.volume += netFlows[i] * dt;
+                state.volume = Math.max(0, state.volume);
+                state.h = state.volume / node.junction_area;
+            }
+        }
+        
+        // --- 第 1 部分 & 第 3 部分: 3D SDF 渲染 ---
+        const uniforms = {
+            u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+            u_time: { value: 0.0 },
+            u_cameraPos: { value: new THREE.Vector3() },
+            u_cameraTarget: { value: new THREE.Vector3() },
+            u_fov: { value: 45.0 },
+            
+            u_node_h:     { value: new Array(NUM_NODES).fill(0.0) },
+            u_node_pos:   { value: NODES.map(n => n.pos) },
+            u_node_base:  { value: NODES.map(n => n.base_elevation) }
+        };
+
+        init();
+        animate();
+
+        function init() {
+            camera = new THREE.PerspectiveCamera(uniforms.u_fov.value, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(15, 15, 25);
+            scene = new THREE.Scene();
+
+            const geometry = new THREE.PlaneGeometry(2, 2);
+
+            material = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = vec4(position, 1.0);
+                    }
+                `,
+                // --- GLSL 着色器 (与上一版相同，已修复) ---
+                fragmentShader: `
+                    varying vec2 vUv;
+                    uniform vec2 u_resolution;
+                    uniform float u_time;
+                    uniform vec3 u_cameraPos;
+                    uniform vec3 u_cameraTarget;
+                    uniform float u_fov;
+
+                    const int NUM_NODES = ${NUM_NODES};
+                    uniform float u_node_h[NUM_NODES];
+                    uniform vec3  u_node_pos[NUM_NODES];
+                    uniform float u_node_base[NUM_NODES];
+
+                    const int MAX_STEPS = 100;
+                    const float HIT_DIST = 0.005;
+                    const float MAX_DIST = 100.0;
+                    const float SMOOTH_K = 6.0; 
+                    const float TUNNEL_RADIUS = 2.0;
+
+                    vec2 sdTunnelCenterline(vec3 p, vec3 a, vec3 b) {
+                        vec3 pa = p - a;
+                        vec3 ba = b - a;
+                        float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+                        return vec2(length(pa - ba * h), h);
+                    }
+
+                    float sdTunnel(vec3 p, vec3 a, vec3 b, float r) {
+                        return sdTunnelCenterline(p, a, b).x - r;
+                    }
+
+                    float opSmoothUnion(float d1, float d2, float k) {
+                        float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
+                        return mix(d2, d1, h) - k * h * (1.0 - h);
+                    }
+
+                    float map_static_tunnel(vec3 p) {
+                        float p0 = sdTunnel(p, u_node_pos[0], u_node_pos[1], TUNNEL_RADIUS);
+                        float p1 = sdTunnel(p, u_node_pos[1], u_node_pos[2], TUNNEL_RADIUS);
+                        float p2 = sdTunnel(p, u_node_pos[1], u_node_pos[3], TUNNEL_RADIUS);
+
+                        float res = opSmoothUnion(p0, p1, SMOOTH_K);
+                        res = opSmoothUnion(res, p2, SMOOTH_K);
+                        return res;
+                    }
+                    
+                    float map_dynamic_water_plane(vec3 p) {
+                        vec2 c0 = sdTunnelCenterline(p, u_node_pos[0], u_node_pos[1]);
+                        float h_abs0 = mix(u_node_base[0] + u_node_h[0], u_node_base[1] + u_node_h[1], c0.y);
+                        
+                        vec2 c1 = sdTunnelCenterline(p, u_node_pos[1], u_node_pos[2]);
+                        float h_abs1 = mix(u_node_base[1] + u_node_h[1], u_node_base[2] + u_node_h[2], c1.y);
+
+                        vec2 c2 = sdTunnelCenterline(p, u_node_pos[1], u_node_pos[3]);
+                        float h_abs2 = mix(u_node_base[1] + u_node_h[1], u_node_base[3] + u_node_h[3], c2.y);
+
+                        float k_blend = 10.0; 
+                        float w0 = smoothstep(1.0, 0.0, k_blend * c0.x);
+                        float w1 = smoothstep(1.0, 0.0, k_blend * c1.x);
+                        float w2 = smoothstep(1.0, 0.0, k_blend * c2.x);
+
+                        float sum_w = w0 + w1 + w2 + 0.0001;
+                        float h_p = (h_abs0 * w0 + h_abs1 * w1 + h_abs2 * w2) / sum_w;
+
+                        return p.y - h_p;
+                    }
+
+                    vec2 map_scene(vec3 p) {
+                        float d_tunnel = map_static_tunnel(p);
+                        float d_water_plane = map_dynamic_water_plane(p);
+                        float d_water_body = max(d_water_plane, d_tunnel); // 修复后的 CSG
+                        float d_scene = min(d_tunnel, d_water_body);
+                        return vec2(d_scene, d_tunnel < d_water_body ? 0.0 : 1.0);
+                    }
+                    
+                    vec3 getNormal(vec3 p) {
+                        vec2 e = vec2(HIT_DIST, 0);
+                        float d = map_scene(p).x;
+                        return normalize(vec3(
+                            d - map_scene(p - e.xyy).x,
+                            d - map_scene(p - e.yxy).x,
+                            d - map_scene(p - e.yyx).x
+                        ));
+                    }
+
+                    vec3 getRayDirection(vec2 uv, vec3 camPos, vec3 camTarget, float fov) {
+                        vec2 st = uv * 2.0 - 1.0;
+                        float aspect = u_resolution.x / u_resolution.y;
+                        st.x *= aspect;
+                        vec3 fwd = normalize(camTarget - camPos);
+                        vec3 right = normalize(cross(fwd, vec3(0, 1, 0)));
+                        vec3 up = normalize(cross(right, fwd));
+                        float fovRad = fov * 3.14159 / 180.0;
+                        float vHeight = tan(fovRad / 2.0);
+                        return normalize(fwd + right * st.x * vHeight * aspect + up * st.y * vHeight);
+                    }
+
+                    vec2 rayMarch(vec3 ro, vec3 rd) {
+                        float dist = 0.0;
+                        for (int i = 0; i < MAX_STEPS; i++) {
+                            vec3 p = ro + rd * dist;
+                            vec2 res = map_scene(p);
+                            float d = res.x;
+                            if (d < HIT_DIST) { return vec2(dist, res.y); }
+                            dist += d;
+                            if (dist > MAX_DIST) { return vec2(-1.0, -1.0); }
+                        }
+                        return vec2(-1.0, -1.0);
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+                        vec3 ro = u_cameraPos;
+                        vec3 rd = getRayDirection(uv, u_cameraPos, u_cameraTarget, u_fov);
+
+                        vec2 res = rayMarch(ro, rd);
+                        float dist = res.x;
+                        float hitID = res.y;
+
+                        if (dist > 0.0) {
+                            vec3 p = ro + rd * dist;
+                            vec3 normal = getNormal(p);
+                            vec3 lightPos = vec3(10.0, 20.0, 15.0); // 固定光源
+                            vec3 lightDir = normalize(lightPos - p);
+                            float diff = max(dot(normal, lightDir), 0.15);
+
+                            if (hitID == 1.0) {
+                                // 命中 水体
+                                vec3 waterColor = vec3(0.1, 0.3, 0.7);
+                                float fresnel = pow(1.0 - max(0.0, dot(normal, -rd)), 3.0);
+                                vec3 reflectDir = reflect(-lightDir, normal);
+                                float spec = pow(max(dot(reflectDir, -rd), 0.0), 32.0);
+                                vec3 color = mix(waterColor * diff, vec3(1.0), fresnel * 0.5);
+                                color += vec3(0.8) * spec;
+                                gl_FragColor = vec4(color, 1.0);
+                            } else {
+                                // 命中 隧道
+                                vec3 tunnelColor = vec3(0.7); 
+                                gl_FragColor = vec4(tunnelColor * diff, 1.0);
+                            }
+                        } else {
+                            // 未命中
+                            gl_FragColor = vec4(0.05, 0.05, 0.1, 1.0);
+                        }
+                    }
+                `,
+                transparent: false 
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, 2, 0);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.update();
+            
+            // --- 初始化物理 ---
+            initPhysicsState();
+
+            // --- 初始化 UI ---
+            const gui = new GUI();
+            gui.add(simParams, 'inflow', 0.0, 30.0, 0.5).name('入水流量 (m³/s)');
+            gui.add(simParams, 'drainCoeff2', 0.0, 10.0, 0.1).name('出口2 排水系数');
+            gui.add(simParams, 'drainCoeff3', 0.0, 10.0, 0.1).name('出口3 排水系数');
+            gui.add(simParams, 'reset').name('重置模拟');
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 1. 更新物理 (固定步长)
+            accumulator += clock.getDelta();
+            while (accumulator >= FIXED_DT) {
+                updatePhysics(FIXED_DT);
+                accumulator -= FIXED_DT;
+            }
+
+            // 2. 传递数据到 GPU
+            for(let i=0; i < NUM_NODES; i++) {
+                uniforms.u_node_h.value[i] = nodeState[i].h; 
+            }
+
+            // 3. 渲染 3D 场景
+            uniforms.u_time.value = (Date.now() - startTime) / 1000.0;
+            uniforms.u_cameraPos.value.copy(camera.position);
+            uniforms.u_cameraTarget.value.copy(controls.target);
+            uniforms.u_fov.value = camera.fov;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>

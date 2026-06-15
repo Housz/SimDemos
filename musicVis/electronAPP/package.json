@@ -1,0 +1,15 @@
+{
+  "name": "audio-viz-electron",
+  "version": "1.0.0",
+  "description": "Three.js 音乐可视化（支持系统音频/后台不断帧/FPS 控制）",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.10.0"
+  }
+}

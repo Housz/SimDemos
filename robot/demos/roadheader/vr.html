@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>VR Roadheader Control (Levers + GUI)</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<style>
+		html,
+		body {
+			margin: 0;
+			height: 100%;
+		}
+
+		#c {
+			width: 100%;
+			height: 100%;
+			display: block;
+		}
+
+		.upload-btn {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			z-index: 1000;
+			padding: 10px 20px;
+			background: #007BFF;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			display: none;
+		}
+	</style>
+	<canvas id="c"></canvas>
+</head>
+
+<body>
+
+	<button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Robot File</button>
+	<input type="file" id="fileInput" style="display:none" accept=".json">
+
+	<!-- three.js from CDN -->
+	<script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+      }
+    }
+  </script>
+
+	<!-- 给 main.js 用的模型路径（保持你原来的名字） -->
+	<script> let modelPath = './roadheader.json'; </script>
+
+	<script type="module" src="../../mainVR.js"></script>
+
+	<script type="module" src="./script.js"></script>
+
+
+</body>
+
+</html>

@@ -84,7 +84,7 @@ function robotWorkSpaceCreator(robot, robotModel) {
 						wireframe: true,
 						opacity: 0.1,
 						transparent: true,
-						visible: false
+						visible: true
 					});
 				}
 			});
@@ -98,7 +98,7 @@ function robotWorkSpaceCreator(robot, robotModel) {
 
 			// clonedModel.add(sphere);
 			sphere.applyMatrix4(relativeMatrix);
-			robotModel.add(sphere);
+			// robotModel.add(sphere);
 
 			robotModel.add(clonedModel);
 		}
@@ -137,12 +137,17 @@ function robotWorkSpaceCreator(robot, robotModel) {
 		let upper_j = head_joint.limit.upper;
 		let jointModel = getChildByName(robotModel, head_joint_name);
 
+		// const stepV = 0.05;
+		// const stepH = 0.05;
+		// const stepJ = 0.1;
+		const stepV = 0.07;
+		const stepH = 0.07;
+		const stepJ = 0.1;
+		for (let curr_h = lower_h; curr_h <= upper_h; curr_h += stepH) {
 
-		for (let curr_h = lower_h; curr_h <= upper_h; curr_h += 0.05) {
+			for (let curr_v = lower_v; curr_v <= upper_v; curr_v += stepV) {
 
-			for (let curr_v = lower_v; curr_v <= upper_v; curr_v += 0.05) {
-
-				for (let curr_j = lower_j; curr_j <= upper_j; curr_j += 0.1) {
+				for (let curr_j = lower_j; curr_j <= upper_j; curr_j += stepJ) {
 
 					cst_hori.length = curr_h;
 					cst_vert.length = curr_v;
@@ -170,37 +175,37 @@ function robotWorkSpaceCreator(robot, robotModel) {
 
 
 
-	robot.constraints.forEach(constraint => {
+	// robot.constraints.forEach(constraint => {
 
-		if (constraint.type == "triangle-prismatic") {
+	// 	if (constraint.type == "triangle-prismatic") {
 
-			// initialization constraints 
-			robotConstraintHandler(robot, robotModel, constraint.name);
+	// 		// initialization constraints 
+	// 		robotConstraintHandler(robot, robotModel, constraint.name);
 
-			let folder = gui.addFolder(constraint.name);
+	// 		let folder = gui.addFolder(constraint.name);
 
-			let lower = constraint.limit.lower;
-			let upper = constraint.limit.upper;
+	// 		let lower = constraint.limit.lower;
+	// 		let upper = constraint.limit.upper;
 
-			let constraintGUIObject = {
-				length: constraint.length
-			};
+	// 		let constraintGUIObject = {
+	// 			length: constraint.length
+	// 		};
 
-			let length = folder.add(constraintGUIObject, 'length', lower, upper).onChange(value => {
+	// 		let length = folder.add(constraintGUIObject, 'length', lower, upper).onChange(value => {
 
-				constraint.length = value;
+	// 			constraint.length = value;
 
-				// satisfy constraint on each UI update
-				robotConstraintHandler(robot, robotModel, constraint.name);
+	// 			// satisfy constraint on each UI update
+	// 			robotConstraintHandler(robot, robotModel, constraint.name);
 
-			});
+	// 		});
 
 
-		}
-		else {
-			// todo
-		}
-	});
+	// 	}
+	// 	else {
+	// 		// todo
+	// 	}
+	// });
 
 }
 

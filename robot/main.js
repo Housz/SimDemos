@@ -10,6 +10,8 @@ import { robotWorkSpaceCreator } from './robotWorkSpaceCreator.js';
 import { robotIKHandler } from './robotIKHandler.js'
 import { robotRHIKHandler } from './robotRHIKHandler.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { robotConstraintHandler, updateAllConstraints } from './robotConstraintHandler.js'
+
 
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
@@ -143,7 +145,7 @@ scene.add(helper);
 // for trajectory
 // target of end effector
 // let targetGeo = new THREE.SphereGeometry(0.3, 16, 8);
-let targetGeo = new THREE.SphereGeometry(0.6, 16, 8);
+let targetGeo = new THREE.SphereGeometry(0.7, 16, 8);
 // let targetMat = new THREE.MeshStandardMaterial({ color: 0xffff00, transparent: true, opacity: 0.7 });
 let targetMat = new THREE.MeshStandardMaterial({ color: 0x03ee00, transparent: true, opacity: 0.5 });
 // let targetMat = new THREE.MeshStandardMaterial({ color: 0x00ff00, transparent: true, opacity: 0.7, wireframe: true });
@@ -197,7 +199,7 @@ lineGeom.setPositions(positions);
 // 注意：linewidth 为像素宽度，需要设置 resolution
 const lineMat = new LineMaterial({
 	color: 0x008811,
-	linewidth: 4.0,           // 像素，按需调整
+	linewidth: 0.7,           // 像素，按需调整
 	dashed: false,            // 需要虚线可设 true 并调用 computeLineDistances()
 	// opacity: 0.95, transparent: true,  // 想半透明可打开
 });
@@ -225,48 +227,48 @@ window.addEventListener('resize', () => {
 
 
 
-// const loader = new GLTFLoader();
-// loader.load('./models/juejinmian.gltf', (gltf) => {
-// 	const model = gltf.scene;
-// 	model.scale.set(1, 1, 1); // Adjust scale if needed
-// 	model.position.set(0, 0, 0); // Adjust position if needed
-// 	model.traverse((child) => {
-// 		if (child.isMesh) {
-// 			child.castShadow = true;
-// 			child.receiveShadow = true;
-// 		}
-// 	});
-// 	model.position.set(-4.0, model.position.y, 1.6);
-// 	scene.add(model);
+const loader = new GLTFLoader();
+loader.load('./models/juejinmian.gltf', (gltf) => {
+	const model = gltf.scene;
+	model.scale.set(1, 1, 1); // Adjust scale if needed
+	model.position.set(0, 0, 0); // Adjust position if needed
+	model.traverse((child) => {
+		if (child.isMesh) {
+			child.castShadow = true;
+			child.receiveShadow = true;
+		}
+	});
+	model.position.set(-4.0, model.position.y, 1.6);
+	scene.add(model);
 
-// 	// Create GUI for position adjustment
-// 	const gui = new GUI();
-// 	gui.domElement.style.position = 'absolute';
-// 	gui.domElement.style.left = '0px';
-// 	gui.domElement.style.opacity = '0.8';
-// 	gui.domElement.style.top = '650px';
+	// Create GUI for position adjustment
+	const gui = new GUI();
+	gui.domElement.style.position = 'absolute';
+	gui.domElement.style.left = '0px';
+	gui.domElement.style.opacity = '0.8';
+	gui.domElement.style.top = '650px';
 
-// 	gui.title("juejinmian Position");
-// 	const positionFolder = gui.addFolder("Position");
-// 	const positionControls = {
-// 		x: model.position.x,
-// 		y: model.position.y,
-// 		z: model.position.z,
-// 	};
+	gui.title("juejinmian Position");
+	const positionFolder = gui.addFolder("Position");
+	const positionControls = {
+		x: model.position.x,
+		y: model.position.y,
+		z: model.position.z,
+	};
 
-// 	positionFolder.add(positionControls, 'x', -10, 10).onChange((value) => {
-// 		model.position.x = value;
-// 	});
-// 	positionFolder.add(positionControls, 'y', -10, 10).onChange((value) => {
-// 		model.position.y = value;
-// 	});
-// 	positionFolder.add(positionControls, 'z', -10, 10).onChange((value) => {
-// 		model.position.z = value;
-// 	});
-// 	positionFolder.open();
-// }, undefined, (error) => {
-// 	console.error('An error occurred while loading the GLTF model:', error);
-// });
+	positionFolder.add(positionControls, 'x', -10, 10).onChange((value) => {
+		model.position.x = value;
+	});
+	positionFolder.add(positionControls, 'y', -10, 10).onChange((value) => {
+		model.position.y = value;
+	});
+	positionFolder.add(positionControls, 'z', -10, 10).onChange((value) => {
+		model.position.z = value;
+	});
+	positionFolder.open();
+}, undefined, (error) => {
+	console.error('An error occurred while loading the GLTF model:', error);
+});
 
 
 let robot;
@@ -331,24 +333,69 @@ loadRobotJson(modelPath)
 
 		robotWorkSpaceCreator(robot, robotModel);
 
+		let guiCtrl = new GUI();
+		guiCtrl.domElement.style.position = 'absolute';
+		guiCtrl.domElement.style.left = '0px';
+		guiCtrl.domElement.style.opacity = '0.8';
+		robot.constraints.forEach(constraint => {
+
+			if (constraint.type == "triangle-prismatic") {
+
+				// initialization constraints 
+				robotConstraintHandler(robot, robotModel, constraint.name);
+
+				let folder = guiCtrl.addFolder(constraint.name);
+
+				let lower = constraint.limit.lower;
+				let upper = constraint.limit.upper;
+
+				let constraintGUIObject = {
+					length: constraint.length
+				};
+
+				let length = folder.add(constraintGUIObject, 'length', lower, upper).onChange(value => {
+
+					constraint.length = value;
+
+					// satisfy constraint on each UI update
+					robotConstraintHandler(robot, robotModel, constraint.name);
+
+				});
+
+
+			}
+			else {
+				// todo
+			}
+		});
+
+
 		// controller
 		const gui = new GUI();
 		gui.domElement.style.position = 'absolute';
 		gui.domElement.style.left = '0px';
 		gui.domElement.style.opacity = '0.8';
-		gui.domElement.style.top = '500px';
+		gui.domElement.style.top = '450px';
 
 		gui.title("controller");
 		let controllerFolder = gui.addFolder("控制");
 		let controllerObject = {
 			clearAllKeys: () => { clearAllKeys(); },
 			saveKeyPosition: () => { saveKeyPosition(); },
-			playTrajectory: () => { playTrajectory(); }
+			playTrajectory: () => { playTrajectory(); },
+			toggleVisibility: () => {
+				targetMesh.visible = !targetMesh.visible;
+			},
+			toggleTransformControl: () => {
+				transformControl.visible = !transformControl.visible;
+			},
 		};
 
 		controllerFolder.add(controllerObject, 'clearAllKeys');
 		controllerFolder.add(controllerObject, 'saveKeyPosition');
 		controllerFolder.add(controllerObject, 'playTrajectory');
+		controllerFolder.add(controllerObject, 'toggleVisibility');
+		controllerFolder.add(controllerObject, 'toggleTransformControl');
 
 		// transformControl.addEventListener('change', function (event) {
 		// 	robotIKHandler(targetMesh, robotModel);
@@ -447,7 +494,7 @@ function clearAllKeys() {
 // }
 
 function saveKeyPosition() {
-	const geometry = new THREE.SphereGeometry(0.3, 16, 8);
+	const geometry = new THREE.SphereGeometry(0.2, 16, 8);
 	const keyMesh = new THREE.Mesh(geometry, targetMat);
 
 	keyMesh.position.copy(targetMesh.position);
@@ -498,7 +545,7 @@ function updateTrajectoryCurve() {
 		keyGroup.children.map((child) => child.position),
 		false,             // Closed
 		'catmullrom',      // Type
-		0.2                // Tension
+		0.05                // Tension
 	);
 
 	// 采样 ARC_SEGMENTS 个点并写入扁平化数组
