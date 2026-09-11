@@ -25,6 +25,9 @@ import * as THREE from 'three';
 // 这里沿用 PBD.js 的安全钳制值。
 export const MAX_ROTATION_PER_SUBSTEP = 0.5;
 
+/** applyRotationExact 用的临时四元数（避免每子步分配） */
+const TMP_Q_EXP = new THREE.Quaternion();
+
 // ---------------------------------------------------------------------------
 // Pose：刚体的位姿（位置 p + 姿态 q）
 // ---------------------------------------------------------------------------
@@ -124,6 +127,46 @@ export function applyRotationalCorrection(pose, rot, scale = 1.0) {
         pose.q.w + 0.5 * dq.w
     );
     pose.q.normalize();
+}
+
+/**
+ * 自由旋转的**精确**指数映射积分：q ← q · exp(½ [ω,0] h)。
+ *
+ * 与上面的 applyRotationalCorrection 分工不同，别混用：
+ *   · 位置层的约束投影（applyRotationalCorrection）**必须**用一阶线性化形式，
+ *     XPBD 的推导（Eqs. 15-17 的广义逆质量、Gauss-Seidel 的线性叠加）建立在
+ *     「修正量是约束误差的线性函数」之上，换成指数映射会破坏这个前提；
+ *   · 这里做的是**时间积分**（把 ω 沿时间推进一个 h），可以也应该精确求解——
+ *     平动那侧 x ← x + h·v 与 v ← Δx/h 本来就是精确互逆的一对，转动没理由不是。
+ *
+ * 为什么非精确不可：线性化形式会把实际转角缩短为 2·atan(|ω|h/2) ≈ |ω|h(1 − |ω|²h²/12)，
+ * 而由位置反推速度这一步又按 sin(x)/x 再压一次，合起来每个子步损失 |ω|²h²/8 的比例。
+ * 实测（ω=55 rad/s、20 子步）：ω 以 0.31/s 的速率指数衰减，硬币自转 2 秒就掉一半——
+ * 这是纯数值损耗，不是物理。改用精确指积分 + 精确对数反推后，角动量守恒到机器精度。
+ */
+export function applyRotationExact(pose, omega, h) {
+    const w = omega.length();
+    if (w === 0.0) return;
+    const half = 0.5 * w * h;
+    const s = Math.sin(half) / w;      // ω·s = 单位轴 × sin(φ/2)
+    // 左乘（世界系）：q ← exp(½h[ω,0])·q，与 applyRotationalCorrection 的
+    // 「q ← q + ½([ω,0]·q)」同一约定（three.js 的 premultiply 即 a ← b·a）
+    pose.q.premultiply(TMP_Q_EXP.set(omega.x * s, omega.y * s, omega.z * s, Math.cos(half)));
+    pose.q.normalize();
+}
+
+/**
+ * 四元数的**精确**对数映射：返回旋转向量（轴 × 角，轴为单位向量）。
+ *
+ * 即 Δq 真正代表的那个旋转，angle = 2·atan2(|Δq_xyz|, |Δq_w|)。
+ * 论文 Algorithm 2 写的 `ω ← 2[Δq_x, Δq_y, Δq_z]/h` 是它的小角度一阶近似
+ * （2·sin(θ/2) 之于 θ），对高转速体每子步都要吃掉一部分角速度，故这里用精确式。
+ */
+export function quatToRotationVectorExact(q) {
+    const s = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
+    if (s < 1e-12) return new THREE.Vector3();
+    const angle = 2.0 * Math.atan2(s, Math.abs(q.w));
+    return new THREE.Vector3(q.x, q.y, q.z).multiplyScalar(angle / s);
 }
 
 /**

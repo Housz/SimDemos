@@ -29,7 +29,7 @@
 import * as THREE from 'three';
 import { RigidBody } from './rigidBody.js';
 import { Contact, collide } from './contacts.js';
-import { collectPairs } from './broadphase.js';
+import { collectPairs, pairKey } from './broadphase.js';
 
 export class World {
     constructor({
@@ -51,6 +51,11 @@ export class World {
         this._contactPool = [];      // 接触对象池，避免每子步分配
         this._pairs = [];            // 本帧的候选对缓存
         this.pairsCount = 0;
+        this._jointedPairs = new Set();   // 被关节直接连接的刚体对（跳过自碰撞）
+
+        // 速度层的恢复系数重设（论文 Eq. 35）。关闭它可以复现论文图 13 上半图：
+        // 不使用 Eq. 35 时，初始穿透会被 PBD 的速度导出变成巨大的分离速度。
+        this.enableRestitutionReset = true;
 
         // 统计
         this.energy = 0.0;
@@ -96,15 +101,24 @@ export class World {
         const gMag = g.length();
 
         // --- 宽相：每帧只收集一次候选碰撞对（论文 §3.5）---
-        collectPairs(this.bodies, dt, this.broadphaseK, this._pairs);
+        // 先收集「被关节直接连接」的刚体对：它们不该互相碰撞。
+        // （相邻连杆在关节处本来就会重叠，若参与碰撞会把能量注入系统。）
+        const jp = this._jointedPairs;
+        jp.clear();
+        for (let i = 0; i < this.joints.length; i++) {
+            const jt = this.joints[i];
+            if (jt.bodyA && jt.bodyB) jp.add(pairKey(jt.bodyA, jt.bodyB));
+        }
+        collectPairs(this.bodies, dt, this.broadphaseK, this._pairs, jp);
         this.pairsCount = this._pairs.length;
 
+        // 外力/力矩在**所有子步中持续作用**（论文 Algorithm 2 的 v ← v + h·f_ext/m
+        // 位于子步循环内部），因此这里不在每个子步清零，而是在帧末统一清零，
+        // 让场景代码在 preStep() 里设置的 force/torque 能影响本帧的每一个子步。
         for (let s = 0; s < N; s++) {
             // --- 1. 显式积分（论文 Algorithm 2 第一段）---
             for (let i = 0; i < this.bodies.length; i++) {
-                const b = this.bodies[i];
-                if (b.isDynamic) b.clearForces();
-                b.integrate(h, g, this.useGyroscopic);
+                this.bodies[i].integrate(h, g, this.useGyroscopic);
             }
 
             // --- 2. 窄相：生成/更新接触约束（方程 27 的局部锚点在此确定）---
@@ -131,6 +145,12 @@ export class World {
             for (let i = 0; i < this.joints.length; i++) this.joints[i].solveVel(h);
         }
 
+        // 帧末清零外力/力矩累加器（下一帧由场景代码重新设置）
+        for (let i = 0; i < this.bodies.length; i++) {
+            const b = this.bodies[i];
+            if (b.isDynamic) b.clearForces();
+        }
+
         // 同步可视化对象
         for (let i = 0; i < this.bodies.length; i++) this.bodies[i].syncMesh();
 
@@ -153,6 +173,7 @@ export class World {
                 } else {
                     c.init(a, b, descs[d]);
                 }
+                c.enableRestitutionReset = this.enableRestitutionReset;
                 if (c.depth > this.maxPenetration) this.maxPenetration = c.depth;
                 this.contacts.push(c);
                 slot++;

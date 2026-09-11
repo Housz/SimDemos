@@ -13,7 +13,8 @@
 //
 // 速度层（每子步一次）：
 //   v = (v1 + ω1×r1) − (v2 + ω2×r2) ;  vn = n·v ;  vt = v − n·vn                      (Eq. 30)
-//   动摩擦：Δv = −(vt/|vt|)·min(h·μd·fn, |vt|)，fn = λn/h²，μ = (μ1+μ2)/2            (Eq. 31)
+//   动摩擦：库仑冲量 |J| ≤ h·μd·fn（fn = λn/h²，μ = (μ1+μ2)/2），再换算为接触点
+//           相对速度变化 Δv = J·w_t（w_t 为切向广义逆质量）              (Eq. 31 + 34)
 //   恢复系数：Δv = n(−vn + max(−e·v̄n, 0))，e 在 |vn| ≤ 2|g|h 时置 0                  (Eq. 35)
 //
 // 法线方向约定（全库统一）：
@@ -26,6 +27,7 @@ import { applyBodyPairCorrection } from './constraints.js';
 import { ShapeType } from './shapes.js';
 
 const EPS = 1e-9;
+
 const ZERO = new THREE.Vector3(0, 0, 0);
 const AXIS_X = new THREE.Vector3(1, 0, 0);
 const AXIS_Y = new THREE.Vector3(0, 1, 0);
@@ -51,6 +53,10 @@ export class Contact {
         this.lambda = { n: 0.0, t: 0.0 }; // 法向/切向 Lagrange 乘子（每子步清零）
         this.lambdaN = 0.0;               // 位置求解得到的法向乘子大小 → 摩擦锥
         this.active = false;              // 本子步窄相判定时是否真正穿透（速度层的开关）
+        // 是否施加论文 Eq. 35 的“抹掉导出速度 + 反射”步骤。
+        // 关闭后可复现论文图 13 上半图：纯 PBD 的速度导出会让初始穿透的物体弹飞。
+        // 由 World.enableRestitutionReset 统一设置（每子步生成接触时写入）。
+        this.enableRestitutionReset = true;
         this.init(bodyA, bodyB, desc);
     }
 
@@ -172,6 +178,13 @@ export class Contact {
         const B = this.bodyB;
 
         // --- 法向约束：Δx = d·n，α = 0（无限硬）---
+        // 注意（堆叠基准的已知限制）：同一流形的 k 个共面点是线性相关的
+        // （平面接触只有 3 个自由度），而 Gauss-Seidel 的遍历顺序并不对称，
+        // 因此逐个点做全量投影会留下与顺序相关的人造横向位移。实测：一个平放在
+        // 地面上的盒子在**第一个子步**就会获得 ~0.12 m/s 的横向速度（把接触顺序
+        // 反转，该速度精确反号）。这不会让单个盒子出错，但在高塔里会逐子步累积，
+        // 最终让塔“剪切”倒塌。缓解办法是提高 numPosIters（见 sceneBoxStack），
+        // 详见 README「盒子堆叠与论文 Table 1 的偏差」。
         const corr = TMP_C.copy(this.n).multiplyScalar(this.depth);
         const lambda = applyBodyPairCorrection(A, B, corr, 0.0, h, this.p1, this.p2, this.lambda, 'n');
         this.lambdaN = Math.abs(lambda);
@@ -228,12 +241,28 @@ export class Contact {
         const vnPrev = TMP_VP.subVectors(vAp, vBp).dot(this.n);
 
         // --- 动摩擦（论文 Eq. 31）---
+        // Δv ← −(vt/|vt|)·min(h·μd·fn, |vt|)
+        //
+        // 注意冲量↔速度的换算：论文 Eq. 34 施加的 Δv 是**接触点相对速度**的目标变化量，
+        // 对应的冲量是 J = Δv/w（w 为切向的广义逆质量，论文 Eqs. 2-3）。而库仑摩擦
+        // 限制的是冲量本身：|J| ≤ μd·fn·h。所以这里先把冲量钳制到库仑锥内，再换算回
+        // 速度变化 Δv = J·w——直接照抄 Eq. 31 会漏掉这个 ×w，使每个接触点只施加
+        // 1/w 的摩擦力；对盒子的 4 个角点（w ≈ 4）会让动摩擦整体弱 4 倍。
+        // 钳制项 |vt|/w 对应 Δv ≤ |vt|，与论文一致地保证“修正量不超过相对速度本身”，
+        // 因此仍然是无条件稳定的。
         const vtMag = vt.length();
         if (vtMag > EPS && this.dynamicFriction > 0.0) {
             const fn = this.lambdaN / (h * h);           // 论文 Eq. 11：法向力
-            const dv = Math.min(h * this.dynamicFriction * fn, vtMag);
-            const dvVec = vt.multiplyScalar(-dv / vtMag);
-            applyBodyPairCorrection(A, B, dvVec, 0.0, h, this.p1, this.p2, null, null, true);
+            const tHat = TMP_TH.copy(vt).multiplyScalar(1.0 / vtMag);
+            const rA = TMP_RA.subVectors(this.p1, A.pose.p);
+            const rB = TMP_RB.subVectors(this.p2, B.pose.p);
+            const wT = (A ? A.getGeneralizedInvMass(tHat, rA) : 0.0)
+                + (B ? B.getGeneralizedInvMass(tHat, rB) : 0.0);
+            if (wT > EPS) {
+                const impulse = Math.min(h * this.dynamicFriction * fn, vtMag / wT);
+                const dvVec = tHat.multiplyScalar(-impulse * wT);
+                applyBodyPairCorrection(A, B, dvVec, 0.0, h, this.p1, this.p2, null, null, true);
+            }
         }
 
         // --- 法向速度重设 + 恢复系数（论文 Eq. 35）---
@@ -247,6 +276,7 @@ export class Contact {
         //
         // 抖振抑制：|v̄n| ≤ 2|g|h 时置 e = 0——该阈值等于两倍重力在预测步里
         // 增加的速度，静止接触因此不会产生虚假弹跳（论文 §3.6）。
+        if (!this.enableRestitutionReset) return; // 关闭 Eq. 35 → 图 13 上半图的“纯 PBD”行为
         let e = this.restitution;
         if (Math.abs(vnPrev) <= 2.0 * gravityMagnitude * h) e = 0.0;
         const dvn = -vn + Math.max(-e * vnPrev, 0.0);
@@ -269,6 +299,9 @@ const TMP_DP2 = new THREE.Vector3();
 const TMP_V = new THREE.Vector3();
 const TMP_VT = new THREE.Vector3();
 const TMP_VP = new THREE.Vector3();
+const TMP_TH = new THREE.Vector3();
+const TMP_RA = new THREE.Vector3();
+const TMP_RB = new THREE.Vector3();
 
 // ===========================================================================
 // 窄相碰撞检测
@@ -351,16 +384,44 @@ function collideWithPlane(shapeBody, planeBody) {
             break;
         }
         case ShapeType.CYLINDER: {
-            // 两端面圆环采样：既能表现平放（多点稳定），也能表现侧立滚动
-            const N = 8;
+            // 圆柱的「曲面几何」接触 —— 论文图 15（硬币）所依赖的正是这一条。
+            //
+            // 做法是**解析最深点 + 端面圆环采样**两者并用：
+            //   · 倾斜的圆柱与平面只在一个点相切，该点可解析求出：把 −n 分解成
+            //     沿轴 a 与垂直于轴两部分，垂直分量方向就是接触半径的方向，
+            //     即 p = c + hy·sign(−n·a)·a + R·normalize(−n − a(−n·a))。
+            //     这一步是精确的，没有采样误差。
+            //   · 但硬币**平放**时整个端面贴合，单点会让它像陀螺一样倒掉，
+            //     所以再取端面圆环上的采样点（取最深的 4 个）撑出一个支撑多边形。
+            //
+            // 采样密度取 32：早期版本用 8 点时，相邻采样点之间的高度差可达
+            // R·(1−cos22.5°) ≈ 1 cm，等于给硬币的轮缘做了一圈锯齿——侧立自转时
+            // 支撑点每 1/8 圈跳一次，凭空注入/耗散大量能量（实测：55 rad/s 的硬币
+            // 会在一秒内被"颠"倒）。解析最深点 + 加密采样后该误差降到亚毫米。
+            const N = 32;
             const r = s.radius;
             const hy = 0.5 * s.height;
             const scored = [];
+
+            // ① 解析最深点（d = −n 方向的支撑点）
+            const axis = TMP_AXIS.copy(AXIS_Y).applyQuaternion(shapeBody.pose.q);
+            const dAxis = axis.dot(normal);                    // n·a
+            const perp = TMP_PERP.copy(normal).addScaledVector(axis, -dAxis); // n 的垂直分量
+            const pl = perp.length();
+            if (pl > 1e-6) {
+                perp.multiplyScalar(-r / pl);                  // −R·normalize(⊥n)
+                const cap = dAxis >= 0 ? -hy : hy;             // −n 指向的下端面
+                const w = TMP_T2.copy(shapeBody.pose.p).addScaledVector(axis, cap).add(perp);
+                const pen = -TMP_T1.subVectors(w, p0).dot(normal);
+                if (pen > 0) scored.push({ world: w.clone(), pen });
+            }
+
+            // ② 两端面圆环采样（平放时的支撑多边形）
             for (let k = 0; k < N; k++) {
                 const th = (2.0 * Math.PI * k) / N;
                 for (const y of [hy, -hy]) {
                     const local = new THREE.Vector3(r * Math.cos(th), y, r * Math.sin(th));
-                    const w = local.clone().applyQuaternion(shapeBody.pose.q).add(shapeBody.pose.p);
+                    const w = local.applyQuaternion(shapeBody.pose.q).add(shapeBody.pose.p);
                     const pen = -TMP_T1.subVectors(w, p0).dot(normal);
                     if (pen > 0) scored.push({ world: w, pen });
                 }
@@ -592,14 +653,53 @@ function boxFaceContacts(bodyA, bodyB, faceIndex) {
         if (cand.some((c) => c.anchorA.distanceToSquared(anchorA) < 1e-10)) continue;
         cand.push({ anchorA, anchorB, pen });
     }
-    // 每对刚体最多保留 4 个（最深的）接触点，避免过度约束与重复求解
+    // 一个平面接触片只有 3 个自由度（论文 §3.5 的接触约束都是单点约束），
+    // 因此 k > 3 个共面点时第 4 个是**线性相关**的：在 1 次迭代的 Gauss-Seidel 下
+    // 这一行冗余会让解在零空间里随机游走。实测（7 盒堆叠，20 子步 × 3 迭代）：
+    // 4 点的横向漂移是 0.017 m、3 点是 0.013 m；而 1–2 点又少到无法抵抗倾倒
+    // （1 点 69 m、2 点 57 m，直接崩）。故选 3 点，且取**面积最大**的一组以保证不共线。
     cand.sort((a, b) => b.pen - a.pen);
-    for (let i = 0; i < Math.min(4, cand.length); i++) {
+    const keep = pickManifoldPoints(cand, 3);
+    for (let i = 0; i < keep.length; i++) {
         out.push(makeDesc('face',
             { onB: !refIsA, axisIndex: refAxisIndex, sign: sign },
-            bodyA.toLocal(cand[i].anchorA), bodyB.toLocal(cand[i].anchorB)));
+            bodyA.toLocal(keep[i].anchorA), bodyB.toLocal(keep[i].anchorB)));
     }
     return out;
+}
+
+const TMP_MA = new THREE.Vector3();
+const TMP_MB = new THREE.Vector3();
+
+/**
+ * 从接触片候选点里挑出最多 maxCount 个「最能张开」的点。
+ *
+ * 传入的 points 已按穿透深度降序排列，因此**最深的点一定入选**（倾斜面上最深点
+ * 承载最大，丢掉它会让盒子在那个角陷下去），其余名额在剩下的点里枚举，取与最深点
+ * 张成的三角形面积最大的一组——这样即使在裁剪产生细长多边形的退化情形下，
+ * 也能拿到不共线的三点。
+ */
+function pickManifoldPoints(points, maxCount) {
+    if (points.length <= maxCount) return points;
+    if (maxCount !== 3 || points.length < 3) return points.slice(0, maxCount);
+
+    const deepest = points[0];
+    let a = 1;
+    let b = 2;
+    let bestArea = -1.0;
+    for (let j = 1; j < points.length - 1; j++) {
+        TMP_MA.subVectors(points[j].anchorA, deepest.anchorA);
+        for (let k = j + 1; k < points.length; k++) {
+            TMP_MB.subVectors(points[k].anchorA, deepest.anchorA);
+            const area = TMP_MA.cross(TMP_MB).length();
+            if (area > bestArea) {
+                bestArea = area;
+                a = j;
+                b = k;
+            }
+        }
+    }
+    return [deepest, points[a], points[b]];
 }
 
 /**
@@ -760,3 +860,5 @@ const TMP_T1 = new THREE.Vector3();
 const TMP_T2 = new THREE.Vector3();
 const TMP_T3 = new THREE.Vector3();
 const TMP_P2 = new THREE.Vector3();
+const TMP_AXIS = new THREE.Vector3();
+const TMP_PERP = new THREE.Vector3();
