@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Roadheader VR</title>
+    <link rel="stylesheet" href="/src/styles/app.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <canvas id="scene-canvas" aria-label="Roadheader VR scene"></canvas>
+      <section class="toolbar" aria-label="Roadheader controls">
+        <button id="upload-button" type="button">Upload Robot JSON</button>
+        <button id="target-color-button" type="button">Target Color</button>
+        <span id="status" role="status">Loading roadheader model...</span>
+      </section>
+      <input id="robot-file-input" type="file" accept=".json,application/json" hidden />
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
