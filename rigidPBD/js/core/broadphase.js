@@ -24,6 +24,11 @@ const _aabbB = { min: new THREE.Vector3(), max: new THREE.Vector3() };
 const _ownA = { min: new THREE.Vector3(), max: new THREE.Vector3() };
 const _ownB = { min: new THREE.Vector3(), max: new THREE.Vector3() };
 
+/** 被关节直接连在一起的两刚体对，编码成集合键（用于跳过自碰撞） */
+export function pairKey(a, b) {
+    return a.id < b.id ? `${a.id}:${b.id}` : `${b.id}:${a.id}`;
+}
+
 /**
  * 收集本帧的候选碰撞对。
  *
@@ -31,9 +36,10 @@ const _ownB = { min: new THREE.Vector3(), max: new THREE.Vector3() };
  * @param {number} dt 时间步长 Δt
  * @param {number} k  安全系数（论文取 2）
  * @param {Array} out 复用的输出数组
+ * @param {Set<string>} [excluded] 需要跳过的对（被关节连接的刚体）
  * @returns {Array<[RigidBody, RigidBody]>} 候选对
  */
-export function collectPairs(bodies, dt, k = 2.0, out = []) {
+export function collectPairs(bodies, dt, k = 2.0, out = [], excluded = null) {
     out.length = 0;
 
     // 1. 计算每个刚体的精确 AABB，并按 k·Δt·|v| 外扩
@@ -64,6 +70,11 @@ export function collectPairs(bodies, dt, k = 2.0, out = []) {
             const ba = boxes[i];
             const bb = boxes[j];
             if (ba && bb && !overlaps(ba, bb)) continue;
+
+            // 被关节直接连接的刚体不做碰撞：相邻连杆在关节处本来就会
+            // 接触/重叠，若参与碰撞求解，接触投影会和关节约束互相打架，
+            // 把能量源源不断地注入系统（摆链会直接发散）。
+            if (excluded && excluded.has(pairKey(a, b))) continue;
 
             out.push([a, b]);
         }

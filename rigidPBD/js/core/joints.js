@@ -20,6 +20,16 @@ import * as THREE from 'three';
 import { Pose, conj, quatToRotationVector } from './math3d.js';
 import { applyBodyPairCorrection, applyAngularCorrection, limitAngle, wrapPi } from './constraints.js';
 
+/**
+ * 把「锚点」参数统一成 Pose：传 Vector3 视为只有位置、朝向为单位四元数；
+ * 传 Pose 则原样保留（距离关节不约束转动，朝向只是附带信息）。
+ * @param {THREE.Vector3|Pose} a
+ * @returns {Pose}
+ */
+function asPose(a) {
+    return a instanceof Pose ? a : new Pose(a);
+}
+
 // ---------------------------------------------------------------------------
 // 关节基类
 // ---------------------------------------------------------------------------
@@ -43,6 +53,9 @@ export class Joint {
         this.rotDamping = 0.0;      // 角阻尼 μ_ang（论文 Eq. 33）
 
         this.lambda = {};           // 子约束的 λ 累加器（每子步清零）
+        // 可视化用：最近一次求解得到的约束力/力矩**向量**（论文 Eqs. 11、18）
+        // 力的大小 |λ|/h²、方向为约束的投影方向；力矩沿角度约束的旋转轴。
+        this.debugForce = new THREE.Vector3();
         this.debugTorque = new THREE.Vector3();
     }
 
@@ -97,6 +110,12 @@ export class Joint {
 //   目标驱动：   Δx = Δr/|Δr|·(|Δr| − d_target)，无条件施加
 // ---------------------------------------------------------------------------
 export class DistanceJoint extends Joint {
+    /**
+     * @param {THREE.Vector3|Pose} localAnchorA 体 A 上的锚点。
+     *        距离关节不约束相对转动，所以锚点通常只给一个 Vector3；
+     *        需要同时指定关节坐标系朝向时也可以直接传 Pose（与其它关节一致）。
+     * @param {THREE.Vector3|Pose} localAnchorB 体 B 上的锚点
+     */
     constructor(bodyA, bodyB, localAnchorA, localAnchorB, {
         restLength = 0.0,
         compliance = 0.0,
@@ -106,7 +125,7 @@ export class DistanceJoint extends Joint {
         targetLength = null,    // 非 null 时驱动到该长度（马达）
         damping = 0.0,
     } = {}) {
-        super(bodyA, bodyB, new Pose(localAnchorA), new Pose(localAnchorB));
+        super(bodyA, bodyB, asPose(localAnchorA), asPose(localAnchorB));
         this.restLength = restLength;
         this.compliance = compliance;
         this.maxLength = maxLength;
@@ -146,9 +165,11 @@ export class DistanceJoint extends Joint {
         if (target === null) return;
 
         const corr = delta.multiplyScalar((dist - target) / dist);
+        const dir = corr.clone().normalize();
         const lambda = applyBodyPairCorrection(
             this.bodyA, this.bodyB, corr, this.compliance, h, pA, pB, this.lambda, 'dist');
         this.lastForce = Math.abs(lambda) / (h * h); // 论文 Eq. 11: f = λn/h²
+        this.debugForce.copy(dir).multiplyScalar(this.lastForce);
     }
 }
 
@@ -174,7 +195,9 @@ export class FixedJoint extends Joint {
             const q = new THREE.Quaternion().multiplyQuaternions(
                 this.globalPoseA.q, conj(this.globalPoseB.q));
             const rotVec = quatToRotationVector(q);
-            applyAngularCorrection(this.bodyA, this.bodyB, rotVec, this.rotCompliance, h, this.lambda, 'rot');
+            const dirT = rotVec.clone().normalize();
+            const lt = applyAngularCorrection(this.bodyA, this.bodyB, rotVec, this.rotCompliance, h, this.lambda, 'rot');
+            this.debugTorque.copy(dirT).multiplyScalar(Math.abs(lt) / (h * h)); // 论文 Eq. 18
         }
 
         // --- 位置：锚点重合 ---
@@ -183,7 +206,9 @@ export class FixedJoint extends Joint {
             const pA = this.globalPoseA.p;
             const pB = this.globalPoseB.p;
             const delta = new THREE.Vector3().subVectors(pB, pA);
-            applyBodyPairCorrection(this.bodyA, this.bodyB, delta, this.compliance, h, pA, pB, this.lambda, 'pos');
+            const dirF = delta.clone().normalize();
+            const lf = applyBodyPairCorrection(this.bodyA, this.bodyB, delta, this.compliance, h, pA, pB, this.lambda, 'pos');
+            this.debugForce.copy(dirF).multiplyScalar(Math.abs(lf) / (h * h));
         }
     }
 }
@@ -269,9 +294,11 @@ export class HingeJoint extends Joint {
             const q = new THREE.Quaternion().setFromAxisAngle(a1, this.targetAngle);
             const bTarget = b1.clone().applyQuaternion(q);
             const corr = new THREE.Vector3().crossVectors(bTarget, b2);
+            const dirT = corr.clone().normalize();
             const lambda = applyAngularCorrection(this.bodyA, this.bodyB, corr,
                 this.targetCompliance, h, this.lambda, 'target');
             this.lastTorque = Math.abs(lambda) / (h * h); // 论文 Eq. 18
+            this.debugTorque.copy(dirT).multiplyScalar(this.lastTorque);
         }
 
         // 4) 位置：铰链点重合
@@ -280,7 +307,9 @@ export class HingeJoint extends Joint {
             const pA = this.globalPoseA.p;
             const pB = this.globalPoseB.p;
             const delta = new THREE.Vector3().subVectors(pB, pA);
-            applyBodyPairCorrection(this.bodyA, this.bodyB, delta, this.compliance, h, pA, pB, this.lambda, 'pos');
+            const dirF = delta.clone().normalize();
+            const lf = applyBodyPairCorrection(this.bodyA, this.bodyB, delta, this.compliance, h, pA, pB, this.lambda, 'pos');
+            this.debugForce.copy(dirF).multiplyScalar(Math.abs(lf) / (h * h));
         }
     }
 }
@@ -321,7 +350,9 @@ export class SphericalJoint extends Joint {
             const pA = this.globalPoseA.p;
             const pB = this.globalPoseB.p;
             const delta = new THREE.Vector3().subVectors(pB, pA);
-            applyBodyPairCorrection(this.bodyA, this.bodyB, delta, this.compliance, h, pA, pB, this.lambda, 'pos');
+            const dirF = delta.clone().normalize();
+            const lf = applyBodyPairCorrection(this.bodyA, this.bodyB, delta, this.compliance, h, pA, pB, this.lambda, 'pos');
+            this.debugForce.copy(dirF).multiplyScalar(Math.abs(lf) / (h * h));
         }
 
         // 2) 摆动限制：[a1 × a2, a1, a2]
@@ -429,7 +460,8 @@ export class PrismaticJoint extends Joint {
                 // 马达：把滑动轴驱动到目标位移（无条件施加，柔度控制推力）
                 const d = offset.dot(axes[0]);
                 const corr = axes[0].clone().multiplyScalar(d - this.targetSlide);
-                applyBodyPairCorrection(this.bodyA, this.bodyB, corr, this.targetCompliance, h, pA, pB, this.lambda, 'slide');
+                const lf = applyBodyPairCorrection(this.bodyA, this.bodyB, corr, this.targetCompliance, h, pA, pB, this.lambda, 'slide');
+                this.debugForce.copy(axes[0]).multiplyScalar(Math.abs(lf) / (h * h));
                 limits[0] = null; // 该轴已由马达处理
             }
 
@@ -442,7 +474,9 @@ export class PrismaticJoint extends Joint {
                 else if (d > hi) corr.addScaledVector(axes[i], d - hi);
             }
             if (corr.lengthSq() > 0.0) {
-                applyBodyPairCorrection(this.bodyA, this.bodyB, corr, this.compliance, h, pA, pB, this.lambda, 'pos');
+                const dirF = corr.clone().normalize();
+                const lf = applyBodyPairCorrection(this.bodyA, this.bodyB, corr, this.compliance, h, pA, pB, this.lambda, 'pos');
+                this.debugForce.copy(dirF).multiplyScalar(Math.abs(lf) / (h * h));
             }
         }
     }
