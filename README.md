@@ -6,6 +6,9 @@ just for fun :)
 
 ---
 
+# Learning Demos
+[Learn Git — Visual Workflow](https://simdemos.housz.cn/LearnGit/)
+
 # Physics Demos
 [Single ball with gravity](./1.SingleBallwithGravity/index.html)
 
