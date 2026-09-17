@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="用状态变化图理解 Git / GitHub 日常开发工作流。" />
+  <title>Learn Git — Visual Workflow</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <header class="site-header">
+      <div class="brand-block">
+        <a class="eyebrow" href="../">SimDemos / LearnGit</a>
+        <h1>Git, as state transitions.</h1>
+        <p class="lead">不背命令。看清文件、暂存区、提交、分支与远程仓库是怎样变化的。</p>
+      </div>
+      <div class="header-tools">
+        <label class="search-box" for="commandSearch">
+          <span>查找命令</span>
+          <input id="commandSearch" type="search" placeholder="例如 push / reset / merge" autocomplete="off" />
+        </label>
+        <div id="searchResults" class="search-results" hidden></div>
+      </div>
+    </header>
+
+    <nav class="section-nav" aria-label="学习章节">
+      <button class="nav-tab" data-page="overview">01 全景</button>
+      <button class="nav-tab" data-page="save">02 保存</button>
+      <button class="nav-tab" data-page="branch">03 分支</button>
+      <button class="nav-tab" data-page="integrate">04 合并</button>
+      <button class="nav-tab" data-page="remote">05 协作</button>
+      <button class="nav-tab" data-page="undo">06 撤销</button>
+    </nav>
+
+    <main id="app" tabindex="-1"></main>
+
+    <footer class="pager" aria-label="章节翻页">
+      <button id="prevPage" type="button">← 上一页</button>
+      <div>
+        <span id="pageNumber">01 / 06</span>
+        <span class="pager-hint">也可使用键盘 ← →</span>
+      </div>
+      <button id="nextPage" type="button">下一页 →</button>
+    </footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
