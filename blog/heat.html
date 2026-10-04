@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>热传导 · 从四邻温差到扩散</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#243344;background:#fff;font-synthesis:none;font-size:13px;line-height:1.45}*{box-sizing:border-box}body{margin:0}main{max-width:820px;margin:auto;padding:8px 14px 7px}h1{font-size:18px;line-height:1.3;margin:0;font-weight:650;letter-spacing:.02em}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}header p{display:none}a{color:#346a97;text-underline-offset:3px;font-size:12px;white-space:nowrap}button,select,input{font:inherit;color:inherit}button,select,input[type=number]{border:1px solid #ccd5dd;border-radius:5px;background:#fff;min-height:30px}button{padding:4px 11px;cursor:pointer}button:hover{background:#edf4f8}button.primary{background:#244f72;color:white;border-color:#244f72}button.primary:hover{background:#193f60}button:disabled{opacity:.5;cursor:default}select{padding:3px 24px 3px 6px;max-width:100%}input[type=number]{width:66px;padding:3px 5px}input[type=range]{width:80px;accent-color:#346a97}input[type=checkbox]{accent-color:#346a97;width:16px;height:16px;margin:0}:focus-visible{outline:3px solid #e0992e;outline-offset:3px}.toolbar{display:flex;align-items:center;gap:7px 13px;flex-wrap:wrap}.toolbar label,.brush label,.parameters label{display:inline-flex;align-items:center;gap:5px}.setup{padding-bottom:8px;border-bottom:1px solid #e4e9ed}.workspace{display:grid;grid-template-columns:minmax(170px,210px) minmax(200px,1fr);gap:18px;align-items:start;padding-top:10px}.field{min-width:0}.field svg{display:block;width:100%;height:auto;aspect-ratio:1;touch-action:pan-y;border:1px solid #ced7dd;background:#f4f7f9;cursor:crosshair;user-select:none;-webkit-user-select:none}.field svg.drawing{touch-action:none;cursor:crosshair}.cell{stroke:#ffffff;stroke-opacity:.28;stroke-width:.32}.selection{fill:none;stroke:#152638;stroke-width:1.75;pointer-events:none}.neighbor{fill:none;stroke:#fff;stroke-width:1.3;pointer-events:none}.marker{font-size:7px;font-weight:750;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:#fff;stroke-width:1.9;fill:#102a40;pointer-events:none}.legend{display:flex;align-items:center;gap:7px;margin:5px 0 0;color:#637182;font-size:11px;white-space:nowrap}.legend-strip{height:7px;flex:1;background:linear-gradient(90deg,#2c65a1,#72b6d4 25%,#eeecc6 50%,#f3a55b 75%,#bd3f37);border-radius:2px}.inspector{font-variant-numeric:tabular-nums;min-width:0}.inspector h2{font-size:13px;margin:0 0 5px;font-weight:650}.thermometers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;max-width:320px;margin:0 0 8px}.thermometers div{min-height:32px;padding:3px 4px;background:#f2f5f7;border-radius:3px;text-align:center;white-space:nowrap}.thermometers .center{background:#e7f0f5}.thermometers span{font-size:10px;color:#647386}.thermometers strong{font-size:12px;font-weight:600;display:block}.north{grid-column:2}.west{grid-row:2;grid-column:1}.center{grid-row:2;grid-column:2}.east{grid-row:2;grid-column:3}.south{grid-row:3;grid-column:2}.numbers{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0}.numbers dt{color:#657383}.numbers dd{margin:0;text-align:right;font-weight:550}.formula{font-size:11px;color:#637282;margin:7px 0 4px;overflow-wrap:anywhere}.explanation{font-size:12px;margin:0;color:#344f62;min-height:34px}.transport{margin-top:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}.clock{font-size:12px;font-variant-numeric:tabular-nums;color:#526273;white-space:nowrap}.brush{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:9px 0 6px}.brush .toggle{font-weight:600}.brush[data-enabled=false] .brush-setting{opacity:.65}.parameters{display:flex;gap:8px 13px;flex-wrap:wrap;align-items:center;padding-top:7px;border-top:1px solid #e4e9ed;font-size:12px}.parameters input{width:62px;min-height:27px}.r-value{color:#225641;font-size:12px;white-space:nowrap}.footnote{font-size:11px;color:#697888;margin:5px 0 0}.status{font-size:11px;color:#5b6c7d;min-height:16px;margin:4px 0 0}.help{margin-top:5px;font-size:11px;color:#647585}.help summary{cursor:pointer;width:fit-content}.help p{margin:5px 0}.math{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:541px){.inspector{display:grid;grid-template-columns:110px minmax(155px,1fr);gap:4px 14px;max-width:500px}.inspector h2{grid-column:1/-1}.thermometers{grid-column:1;grid-row:2 / span 2;width:110px}.thermometers strong{font-size:11px}.thermometers span{font-size:10px}.thermometers div{padding:3px 1px}.numbers{grid-column:2;grid-row:2;font-size:12px}.formula{grid-column:2;grid-row:3;margin:2px 0}.explanation{grid-column:1/-1;margin-top:4px;min-height:28px}}
+@media(max-width:540px){main{padding:9px 10px}header{margin-bottom:7px}h1{font-size:16px}header p{display:none}.toolbar{gap:6px 9px;font-size:11px}select{min-height:28px;padding-left:4px}#preset{width:96px}#boundary{width:133px}.workspace{grid-template-columns:minmax(140px,1.15fr) minmax(130px,1fr);gap:10px;padding-top:8px}.field svg{height:auto}.inspector h2{font-size:12px}.thermometers{gap:2px;margin-bottom:5px}.thermometers div{min-height:31px;padding:1px}.thermometers strong{font-size:11px}.thermometers span{font-size:10px}.numbers{font-size:12px;gap:2px 5px}.formula{font-size:11px;margin-top:5px}.explanation{font-size:12px;min-height:29px}.transport{gap:5px;margin-top:7px}button{padding:4px 8px;min-height:29px}.clock{font-size:11px}.brush{gap:6px 9px;font-size:11px;padding-top:7px}.brush input[type=number]{width:50px;min-height:27px}.brush input[type=range]{width:50px}.parameters{gap:5px 8px;font-size:10px;padding-top:6px}.parameters input{width:51px;min-height:26px}.r-value{font-size:11px}.footnote,.status{font-size:11px}.legend{font-size:11px;gap:4px}.help{font-size:10px}}
+@media(max-width:420px){.numbers{grid-template-columns:1fr;gap:0}.numbers dd{text-align:left;margin-bottom:3px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main>
+  <header><div><h1>热量如何扩散？</h1><p>点选一格，看它如何向四邻平均温度靠近。</p></div><a href="./heat.html" target="_blank" rel="noopener">独立打开 ↗</a></header>
+  <noscript><p>此交互演示需要 JavaScript。请在浏览器中启用后重新打开；正文仍可阅读热传导公式与静态示意图。</p></noscript>
+  <div class="toolbar setup">
+    <label for="preset">初值 <select id="preset"><option value="hotspot">中心热点</option><option value="split">左右冷热</option><option value="uniform">均匀 50℃</option><option value="custom" disabled>自定义初值</option></select></label>
+    <label for="boundary">边界 <select id="boundary"><option value="insulated">绝热 · 零通量</option><option value="cold">四边固定 20℃</option><option value="hot-cold">固定 · 左热右冷</option></select></label>
+  </div>
+  <section class="workspace" aria-label="温度网格与单格解释">
+    <div class="field">
+      <svg id="heat-grid" viewBox="0 0 210 210" role="grid" tabindex="0" aria-label="21乘21温度网格，方向键选择，绘制模式下按空格涂色" aria-describedby="keyboard-help" aria-rowcount="21" aria-colcount="21"><title>二维热传导温度网格</title><g id="cells"></g><g id="markers" aria-hidden="true"></g></svg>
+      <div class="legend" aria-label="固定色标，0摄氏度至100摄氏度"><span>0℃</span><div class="legend-strip"></div><span>50</span><span>100℃</span></div>
+    </div>
+    <div class="inspector" aria-label="选中格计算">
+      <h2 id="selection-title">选中格 C · (11, 13)</h2>
+      <div class="thermometers" aria-label="中心与四邻温度">
+        <div class="north"><span>N 上</span><strong id="temp-n"></strong></div>
+        <div class="west"><span>W 左</span><strong id="temp-w"></strong></div>
+        <div class="center"><span>C 中心</span><strong id="temp-c"></strong></div>
+        <div class="east"><span>E 右</span><strong id="temp-e"></strong></div>
+        <div class="south"><span>S 下</span><strong id="temp-s"></strong></div>
+      </div>
+      <dl class="numbers"><dt>四邻平均 m</dt><dd id="neighbor-mean"></dd><dt>离散 ΔₕT</dt><dd id="laplacian"></dd><dt>下一步温变</dt><dd id="next-change"></dd><dt>下一步温度</dt><dd id="next-temp"></dd></dl>
+      <p class="formula">ΔₕT = 4(m − T<sub>C</sub>)/h²<br>T<sub>C</sub> 下一步 = T<sub>C</sub> + 4r(m − T<sub>C</sub>)</p>
+      <p id="explanation" class="explanation"></p>
+    </div>
+  </section>
+  <div class="transport"><button id="play" class="primary" type="button" aria-pressed="false">播放</button><button id="step" type="button">单步</button><button id="reset" type="button" title="恢复最后绘制的自定义初值或当前预设">恢复初值</button><span id="clock" class="clock">第 0 步 · t = 0 s</span></div>
+  <div id="brush" class="brush" data-enabled="false">
+    <label class="toggle" for="draw"><input id="draw" type="checkbox">绘制初值</label>
+    <label class="brush-setting" for="brush-temp">画笔 <input id="brush-temp" type="number" min="0" max="100" step="5" value="80" disabled>℃</label>
+    <label class="brush-setting" for="brush-radius">半径 <input id="brush-radius" type="range" min="0" max="4" step="1" value="1" disabled><output id="radius-output" for="brush-radius">1 格</output></label>
+  </div>
+  <div class="parameters" aria-label="物理参数与稳定性约束">
+    <label for="spacing">h <input id="spacing" type="number" min="0.1" max="100" step="0.1" value="1" aria-label="网格间距，厘米">cm</label>
+    <label for="alpha">α <input id="alpha" type="number" min="0.001" max="100" step="0.1" value="1" aria-label="热扩散率，以10的负4次方平方米每秒为单位">×10⁻⁴ m²/s</label>
+    <label for="dt">Δt <input id="dt" type="number" min="0.000001" step="0.01" value="0.1" aria-label="时间步长，秒">s</label>
+    <span id="stability" class="r-value"></span>
+  </div>
+  <p id="boundary-note" class="footnote"></p>
+  <p id="summary" class="footnote"></p>
+  <p id="status" class="status" role="status" aria-live="polite">点选查看；开启「绘制初值」后可拖动涂色。</p>
+  <details class="help"><summary>操作与计算说明</summary><p id="keyboard-help">网格获得焦点后，用方向键移动选中格；开启绘制后按空格或回车涂色。开启绘制会暂停并恢复已保存的初值，修改自动保存。关闭绘制后，触摸上下滑动可滚动文章。恒温边界不可涂色。</p><p>21 × 21 格。每步先读取完整旧数组，再写入另一数组。采用二维五点显式格式，r = αΔt/h² ≤ 1/4；参数变更时会自动缩短过大的 Δt。播放每秒推进约 10 步；t 是累计物理时间。h 改变格子间距与区域尺寸，格数不变。温度色标始终固定在 0–100℃。</p></details>
+  <span id="selection-announcement" class="sr-only" aria-live="polite"></span>
+</main>
+<script id="heat-engine">
+/* Pure numerical model: no DOM, no network, and no in-place time stepping. */
+(function (root) {
+  'use strict';
+  const BOUNDARIES = ['insulated', 'cold', 'hot-cold'];
+  function clamp(value, min, max, fallback) {
+    const number = (value === '' || value === null || value === undefined) ? NaN : Number(value);
+    return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+  }
+  function parameters(raw = {}) {
+    const h = clamp(raw.h, 0.001, 1, 0.01);
+    const alpha = clamp(raw.alpha, 1e-7, 1e-2, 1e-4);
+    const maxDt = h * h / (4 * alpha);
+    const dt = Math.min(clamp(raw.dt, 1e-6, 100, 0.1), maxDt);
+    return { h, alpha, dt, maxDt, r: Math.min(0.25, alpha * dt / (h * h)) };
+  }
+  function boundaryMode(value) { return BOUNDARIES.includes(value) ? value : 'insulated'; }
+  function edge(x, y, n) { return x === 0 || y === 0 || x === n - 1 || y === n - 1; }
+  function fixedTemperature(x, y, n, mode) {
+    if (mode === 'insulated' || !edge(x, y, n)) return null;
+    if (mode === 'cold') return 20;
+    // Top and bottom take precedence at corners. All four sides are explicit.
+    if (y === 0 || y === n - 1) return 50;
+    return x === 0 ? 100 : 0;
+  }
+  function applyBoundary(values, n, mode) {
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const fixed = fixedTemperature(x, y, n, mode);
+      if (fixed !== null) values[y * n + x] = fixed;
+    }
+    return values;
+  }
+  function makePreset(n, preset = 'hotspot') {
+    const values = new Float64Array(n * n);
+    const mid = (n - 1) / 2;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      values[y * n + x] = preset === 'uniform' ? 50 : preset === 'split' ? (x < n / 2 ? 80 : 20) : (Math.abs(x - mid) <= 2 && Math.abs(y - mid) <= 2 ? 80 : 20);
+    }
+    return values;
+  }
+  function createModel(options = {}) {
+    const n = Math.round(clamp(options.n, 5, 81, 21));
+    const boundary = boundaryMode(options.boundary);
+    const initial = options.initial && options.initial.length === n * n
+      ? Float64Array.from(options.initial, value => clamp(value, 0, 100, 20))
+      : makePreset(n, options.preset);
+    applyBoundary(initial, n, boundary);
+    return { n, boundary, params: parameters(options), initial, current: initial.slice(), next: new Float64Array(n * n), steps: 0, time: 0 };
+  }
+  function neighbors(values, n, x, y) {
+    const c = values[y * n + x];
+    // A missing neighbor equals the cell itself: zero flux at an insulated face.
+    return { c, e: x < n - 1 ? values[y * n + x + 1] : c, w: x > 0 ? values[y * n + x - 1] : c, n: y > 0 ? values[(y - 1) * n + x] : c, s: y < n - 1 ? values[(y + 1) * n + x] : c };
+  }
+  function fillNext(old, next, n, params, mode) {
+    if (old === next || old.buffer === next.buffer) throw new Error('Time stepping requires separate buffers.');
+    if (old.length !== n * n || next.length !== n * n) throw new Error('Grid size mismatch.');
+    const p = parameters(params);
+    const boundary = boundaryMode(mode);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const fixed = fixedTemperature(x, y, n, boundary);
+      if (fixed !== null) { next[y * n + x] = fixed; continue; }
+      const q = neighbors(old, n, x, y);
+      next[y * n + x] = q.c + p.r * (q.e + q.w + q.n + q.s - 4 * q.c);
+    }
+    return next;
+  }
+  function advance(model, count = 1) {
+    const steps = Math.round(clamp(count, 0, 1000, 1));
+    model.params = parameters(model.params);
+    for (let step = 0; step < steps; step++) {
+      fillNext(model.current, model.next, model.n, model.params, model.boundary);
+      [model.current, model.next] = [model.next, model.current];
+      model.steps++;
+      model.time += model.params.dt;
+    }
+    return model;
+  }
+  function reset(model) {
+    model.current.set(model.initial);
+    applyBoundary(model.current, model.n, model.boundary);
+    model.steps = 0; model.time = 0;
+    return model;
+  }
+  function setPreset(model, preset) {
+    model.initial = applyBoundary(makePreset(model.n, preset), model.n, model.boundary);
+    return reset(model);
+  }
+  function setBoundary(model, boundary) {
+    model.boundary = boundaryMode(boundary);
+    applyBoundary(model.initial, model.n, model.boundary);
+    return reset(model);
+  }
+  function setParameters(model, values) {
+    model.params = parameters({ ...model.params, ...values });
+    return model.params;
+  }
+  function paintInitial(model, x, y, temperature, radius) {
+    x = Math.round(clamp(x, 0, model.n - 1, 0));
+    y = Math.round(clamp(y, 0, model.n - 1, 0));
+    const temp = clamp(temperature, 0, 100, 80);
+    const size = Math.round(clamp(radius, 0, 4, 1));
+    if (model.steps !== 0) reset(model);
+    let changed = 0;
+    for (let j = Math.max(0, y - size); j <= Math.min(model.n - 1, y + size); j++) {
+      for (let i = Math.max(0, x - size); i <= Math.min(model.n - 1, x + size); i++) {
+        if ((i - x) ** 2 + (j - y) ** 2 > size ** 2 || fixedTemperature(i, j, model.n, model.boundary) !== null) continue;
+        model.initial[j * model.n + i] = temp;
+        model.current[j * model.n + i] = temp;
+        changed++;
+      }
+    }
+    return changed;
+  }
+  function inspect(model, x, y) {
+    x = Math.round(clamp(x, 0, model.n - 1, 0));
+    y = Math.round(clamp(y, 0, model.n - 1, 0));
+    const q = neighbors(model.current, model.n, x, y);
+    const fixed = fixedTemperature(x, y, model.n, model.boundary) !== null;
+    const mean = (q.e + q.w + q.n + q.s) / 4;
+    const laplacian = 4 * (mean - q.c) / model.params.h ** 2;
+    const change = fixed ? 0 : 4 * model.params.r * (mean - q.c);
+    return { ...q, fixed, mean: fixed ? null : mean, laplacian: fixed ? null : laplacian, change, next: q.c + change };
+  }
+  function statistics(model) {
+    let sum = 0, min = Infinity, max = -Infinity;
+    for (const temp of model.current) { sum += temp; min = Math.min(min, temp); max = Math.max(max, temp); }
+    return { sum, mean: sum / model.current.length, min, max };
+  }
+  root.HeatSolver = Object.freeze({ clamp, parameters, fixedTemperature, applyBoundary, makePreset, createModel, neighbors, fillNext, advance, reset, setPreset, setBoundary, setParameters, paintInitial, inspect, statistics });
+})(globalThis);
+</script>
+<script id="heat-ui">
+(function () {
+  'use strict';
+  const H = globalThis.HeatSolver;
+  const $ = id => document.getElementById(id);
+  const model = H.createModel();
+  const svg = $('heat-grid');
+  const ns = 'http://www.w3.org/2000/svg';
+  let selected = { x: 10, y: 8 }, playing = false, drawingPointer = null, lastPainted = null, lastTick = 0;
+  const cells = [];
+  const f = (value, digits = 2) => value === 0 ? '0' : Math.abs(value) < 10 ** -digits || Math.abs(value) >= 1e7 ? value.toExponential(2) : Number(value.toFixed(digits)).toString();
+  const signed = value => (value > 0 ? '+' : '') + f(value, 3);
+  const stops = [[44,101,161],[114,182,212],[238,236,198],[243,165,91],[189,63,55]];
+  function color(temperature) {
+    const t = H.clamp(temperature, 0, 100, 20) / 25;
+    const lo = Math.min(3, Math.floor(t)), a = t - lo;
+    return 'rgb(' + stops[lo].map((v, k) => Math.round(v + a * (stops[lo + 1][k] - v))).join(',') + ')';
+  }
+  function node(name, attrs) {
+    const el = document.createElementNS(ns, name);
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+    return el;
+  }
+  for (let y = 0; y < model.n; y++) {
+    const row = node('g', { role: 'row', 'aria-rowindex': y + 1 });
+    $('cells').append(row);
+    for (let x = 0; x < model.n; x++) {
+      const rect = node('rect', { x: x * 10, y: y * 10, width: 10, height: 10, class: 'cell', id: 'cell-' + x + '-' + y, role: 'gridcell', 'aria-colindex': x + 1 });
+      row.append(rect); cells.push(rect);
+    }
+  }
+  const overlays = [['C',0,0],['E',1,0],['W',-1,0],['N',0,-1],['S',0,1]].map(([letter, dx, dy]) => {
+    const rect = node('rect', { width: 9, height: 9, class: letter === 'C' ? 'selection' : 'neighbor' });
+    const text = node('text', { class: 'marker' }); text.textContent = letter;
+    $('markers').append(rect, text); return { rect, text, dx, dy };
+  });
+  function setStatus(text) { $('status').textContent = text; }
+  function renderInspector(announce = false) {
+    const q = H.inspect(model, selected.x, selected.y);
+    const outside = { e: selected.x === model.n - 1, w: selected.x === 0, n: selected.y === 0, s: selected.y === model.n - 1 };
+    for (const dir of ['c','e','w','n','s']) {
+      const isOutside = outside[dir] && model.boundary !== 'insulated';
+      $('temp-' + dir).textContent = isOutside ? '边界外' : f(q[dir], 1) + '℃';
+      $('temp-' + dir).title = outside[dir] && model.boundary === 'insulated' ? '零通量：缺失邻居取中心温度' : '';
+    }
+    $('selection-title').textContent = '选中格 C · (' + (selected.x + 1) + ', ' + (model.n - selected.y) + ')';
+    $('neighbor-mean').textContent = q.fixed ? '不适用' : f(q.mean) + '℃';
+    $('laplacian').textContent = q.fixed ? '不推进' : signed(q.laplacian) + ' ℃/m²';
+    $('next-change').textContent = signed(q.change) + '℃';
+    $('next-temp').textContent = f(q.next, 3) + '℃';
+    $('explanation').textContent = q.fixed ? '恒温边界由外界维持，不参与内部更新。' : q.mean === q.c ? '中心等于四邻平均，本步温度不变。' : q.mean > q.c ? '四邻平均更暖，这一格将升温。' : '四邻平均更冷，这一格将降温。';
+    if (!q.fixed && Object.values(outside).some(Boolean)) $('explanation').textContent += ' 缺邻取自身，边界零通量。';
+    svg.setAttribute('aria-activedescendant', 'cell-' + selected.x + '-' + selected.y);
+    cells.forEach((cell, index) => cell.setAttribute('aria-selected', index === selected.y * model.n + selected.x ? 'true' : 'false'));
+    overlays.forEach(({ rect, text, dx, dy }) => {
+      const x = selected.x + dx, y = selected.y + dy, show = x >= 0 && y >= 0 && x < model.n && y < model.n;
+      rect.style.display = text.style.display = show ? '' : 'none';
+      rect.setAttribute('x', x * 10 + .5); rect.setAttribute('y', y * 10 + .5);
+      text.setAttribute('x', x * 10 + 5); text.setAttribute('y', y * 10 + 5);
+    });
+    if (announce) $('selection-announcement').textContent = $('selection-title').textContent + '，' + f(q.c, 1) + '摄氏度。' + $('explanation').textContent;
+  }
+  function render(announce = false) {
+    cells.forEach((cell, index) => { cell.setAttribute('fill', color(model.current[index])); cell.setAttribute('aria-label', '坐标（' + (index % model.n + 1) + '，' + (model.n - Math.floor(index / model.n)) + '），' + f(model.current[index], 1) + '摄氏度'); });
+    renderInspector(announce);
+    $('clock').textContent = '第 ' + model.steps + ' 步 · t = ' + f(model.time, 6) + ' s';
+    const stats = H.statistics(model);
+    $('summary').textContent = '平均 ' + f(stats.mean, 3) + '℃ · 最低 ' + f(stats.min, 2) + '℃ · 最高 ' + f(stats.max, 2) + '℃' + (model.boundary === 'insulated' ? ' · 绝热时总热量守恒' : ' · 与外界交换热量');
+  }
+  function stop() { playing = false; $('play').textContent = '播放'; $('play').setAttribute('aria-pressed', 'false'); }
+  function setDraw(enabled, restore) {
+    $('draw').checked = enabled; svg.classList.toggle('drawing', enabled);
+    $('brush').setAttribute('data-enabled', String(enabled));
+    $('brush-temp').disabled = $('brush-radius').disabled = !enabled;
+    drawingPointer = null; lastPainted = null;
+    if (enabled) { stop(); if (restore) H.reset(model); setStatus('正在编辑已保存初值，涂色自动保存。播放前会退出绘制。'); }
+    else setStatus('点选查看；触摸可滚动文章。');
+    render();
+  }
+  function parameterUI() {
+    const p = model.params;
+    $('spacing').value = f(p.h * 100, 8); $('alpha').value = f(p.alpha * 1e4, 8); $('dt').value = f(p.dt, 8); $('dt').max = String(p.maxDt);
+    $('stability').textContent = 'r = ' + f(p.r, 4) + ' ≤ 1/4';
+    $('stability').title = 'r = αΔt/h²，当前允许 Δt ≤ ' + f(p.maxDt, 8) + ' s';
+  }
+  function boundaryUI() {
+    $('boundary-note').textContent = model.boundary === 'insulated' ? '绝热：缺少的邻居取本格温度，四边没有热流穿过。' : model.boundary === 'cold' ? '四边及角点固定 20℃；只推进内部格子，边界不可涂色。' : '左边 100℃，右边 0℃，上下边 50℃（含四角）；边界不可涂色。';
+  }
+  $('play').addEventListener('click', () => {
+    if (playing) { stop(); return; }
+    if ($('draw').checked) setDraw(false, false);
+    playing = true; lastTick = performance.now(); $('play').textContent = '暂停'; $('play').setAttribute('aria-pressed', 'true');
+  });
+  $('step').addEventListener('click', () => { stop(); if ($('draw').checked) setDraw(false, false); H.advance(model); render(); });
+  $('reset').addEventListener('click', () => { stop(); H.reset(model); render(); setStatus('已恢复保存的初值，步数和物理时间归零。'); });
+  $('draw').addEventListener('change', () => setDraw($('draw').checked, true));
+  $('preset').addEventListener('change', () => { stop(); H.setPreset(model, $('preset').value); render(); setStatus('已载入初值；可直接播放，也可开启绘制修改。'); });
+  $('boundary').addEventListener('change', () => { stop(); H.setBoundary(model, $('boundary').value); boundaryUI(); render(); setStatus('已切换边界并恢复初值。'); });
+  for (const id of ['spacing','alpha','dt']) $(id).addEventListener('change', () => {
+    stop();
+    const raw = { h: H.clamp($('spacing').value, .1, 100, 1) / 100, alpha: H.clamp($('alpha').value, .001, 100, 1) * 1e-4, dt: H.clamp($('dt').value, 1e-6, 100, .1) };
+    H.setParameters(model, raw); parameterUI(); render();
+    setStatus(raw.dt > model.params.dt + 1e-12 ? '为满足 r ≤ 1/4，Δt 已自动缩短为 ' + f(model.params.dt, 8) + ' s。' : '参数已更新；累计时间保留，下一步使用新的 Δt。');
+  });
+  $('brush-temp').addEventListener('change', () => { $('brush-temp').value = H.clamp($('brush-temp').value, 0, 100, 80); });
+  $('brush-radius').addEventListener('input', () => { $('radius-output').textContent = $('brush-radius').value + ' 格'; });
+  function position(event) {
+    const bounds = svg.getBoundingClientRect();
+    return { x: Math.floor(H.clamp((event.clientX - bounds.left) / bounds.width * model.n, 0, model.n - .0001, 0)), y: Math.floor(H.clamp((event.clientY - bounds.top) / bounds.height * model.n, 0, model.n - .0001, 0)) };
+  }
+  function paint() {
+    const painted = H.paintInitial(model, selected.x, selected.y, $('brush-temp').value, $('brush-radius').value);
+    if (painted) { $('preset').value = 'custom'; setStatus('自定义初值已保存；「恢复初值」可随时还原。'); }
+    else setStatus('恒温边界由外界维持，不能涂色。');
+    render();
+  }
+  svg.addEventListener('pointerdown', event => {
+    if (event.button !== 0 && event.pointerType === 'mouse') return;
+    selected = position(event); renderInspector(true);
+    if (!$('draw').checked) return;
+    event.preventDefault(); svg.focus({ preventScroll: true });
+    drawingPointer = event.pointerId; lastPainted = selected.x + ',' + selected.y; svg.setPointerCapture(event.pointerId); paint();
+  });
+  svg.addEventListener('pointermove', event => {
+    if (drawingPointer !== event.pointerId || !$('draw').checked) return;
+    selected = position(event);
+    const key = selected.x + ',' + selected.y;
+    if (key !== lastPainted) { lastPainted = key; paint(); }
+  });
+  function release(event) { if (drawingPointer !== event.pointerId) return; if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId); drawingPointer = null; lastPainted = null; }
+  svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release); svg.addEventListener('lostpointercapture', () => { drawingPointer = null; lastPainted = null; });
+  svg.addEventListener('keydown', event => {
+    const direction = { ArrowLeft: [-1,0], ArrowRight: [1,0], ArrowUp: [0,-1], ArrowDown: [0,1] }[event.key];
+    if (direction) { event.preventDefault(); selected.x = H.clamp(selected.x + direction[0], 0, model.n - 1, 0); selected.y = H.clamp(selected.y + direction[1], 0, model.n - 1, 0); renderInspector(true); }
+    else if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); if ($('draw').checked) paint(); else renderInspector(true); }
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+  function frame(now) {
+    if (playing && now - lastTick >= 100) { H.advance(model); render(); lastTick = now; }
+    requestAnimationFrame(frame);
+  }
+  parameterUI(); boundaryUI(); render(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
