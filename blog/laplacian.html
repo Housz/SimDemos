@@ -67,7 +67,14 @@ globalThis.LaplacianMath = (() => {
     const mean = (E+W+N+S)/4;
     return {C,E,W,N,S,dx,dy,fxx,fyy,exact,discrete,mean,gap:mean-C,error:Math.abs(discrete-exact)};
   }
-  return Object.freeze({presets,evaluate});
+  function formatNumber(n) {
+    const magnitude = Math.abs(n);
+    // Suppress cancellation noise, but never round a meaningful small sample to 0.
+    if (magnitude < 1e-12) return '0';
+    if (magnitude < 1e-3) return Number(n.toPrecision(4)).toExponential();
+    return Number(n.toFixed(4)).toString();
+  }
+  return Object.freeze({presets,evaluate,formatNumber});
 })();
 </script>
 <script>
@@ -83,7 +90,7 @@ globalThis.LaplacianMath = (() => {
   if (Object.hasOwn(model.presets,params.get('preset'))) state.preset = params.get('preset');
   $('preset').value = state.preset;
   let engine = null, dragging = false, pointer = null;
-  const fmt = n => Math.abs(n)<5e-8 ? '0' : Number(n.toFixed(4)).toString();
+  const fmt = model.formatNumber;
   const pointList = () => {
     const p = model.presets[state.preset], {x,y,h} = state;
     return [['C',x,y],['E',x+h,y],['W',x-h,y],['N',x,y+h],['S',x,y-h]].map(([name,x,y]) => ({name,x,y,z:p.f(x,y)*zScale}));

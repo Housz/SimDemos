@@ -8,7 +8,7 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'laplacian.html'), 'utf8
 const source = html.match(/<script id="laplacian-math">([\s\S]*?)<\/script>/)[1];
 const context = {};
 vm.runInNewContext(source, context);
-const { presets, evaluate } = context.LaplacianMath;
+const { presets, evaluate, formatNumber } = context.LaplacianMath;
 const near = (actual, expected, tolerance=1e-11) => assert.ok(Math.abs(actual-expected)<tolerance, `${actual} ≈ ${expected}`);
 
 test('five presets expose correct analytic function values and derivatives', () => {
@@ -92,4 +92,40 @@ test('the shared default orthographic frame includes every preset surface', () =
     assert.ok(Math.hypot(x,y,z)<halfHeight, `vertex ${x},${y},${z} fits the default frame`);
   }
   assert.match(html,new RegExp(`OrthographicCamera\\(-4,4,${halfHeight},-${halfHeight}`));
+});
+
+
+test('number formatting preserves small nonzero values and suppresses floating-point noise', () => {
+  for(const n of [0,-0,1e-15,-2e-14]) assert.equal(formatNumber(n),'0');
+  assert.equal(formatNumber(2.5e-5),'2.5e-5');
+  assert.equal(formatNumber(-2.5e-5),'-2.5e-5');
+  assert.equal(formatNumber(1.5625e-6),'1.563e-6');
+  assert.equal(formatNumber(5e-8),'5e-8');
+  assert.equal(formatNumber(.005),'0.005');
+  assert.equal(formatNumber(.01),'0.01');
+  assert.equal(formatNumber(2),'2');
+  assert.equal(formatNumber(-4),'-4');
+});
+
+test('quartic h=0.1 UI displays nonzero samples and a consistent neighbor-mean identity', () => {
+  // Execute the real UI writer with small DOM stubs, without a browser or npm.
+  // This checks the formatter actually used by sample, mean, gap, and Laplacian fields.
+  const updateNumbersSource=html.match(/  function updateNumbers\(\) \{[\s\S]*?\n  \}\n/)[0];
+  const elements=new Map();
+  const getElement=id=>{
+    if(!elements.has(id))elements.set(id,{textContent:'',setAttribute(){}});
+    return elements.get(id);
+  };
+  assert.match(html,/const fmt = model\.formatNumber;/);
+  vm.runInNewContext(updateNumbersSource+'\nupdateNumbers();',{
+    model:context.LaplacianMath,state:{preset:'quartic',x:0,y:0,h:.1},fmt:formatNumber,
+    $:getElement,location:{href:'https://example.test/blog/laplacian.html'},URL
+  });
+  for(const id of ['sample-e','sample-w','sample-n','sample-s','mean','gap'])assert.equal(getElement(id).textContent,'2.5e-5',id);
+  assert.equal(getElement('sample-c').textContent,'0');
+  assert.equal(getElement('exact').textContent,'0');
+  assert.equal(getElement('discrete').textContent,'0.01');
+  assert.equal(getElement('error').textContent,'0.01');
+  const shownMean=Number(getElement('mean').textContent),shownCenter=Number(getElement('sample-c').textContent);
+  near(4*(shownMean-shownCenter)/(.1*.1),Number(getElement('discrete').textContent));
 });
