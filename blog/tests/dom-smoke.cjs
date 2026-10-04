@@ -42,5 +42,6 @@ change('alpha','');assert.equal($('alpha').value,'1');
 change('boundary','insulated');change('preset','uniform');draw(true);change('brush-temp','80');key(' ');change('spacing','100');change('alpha','0.001');change('dt','0.000001');
 assert.ok(!/中心等于/.test($('explanation').textContent),'small nonzero temperature change must not be described as equilibrium');
 const e=new w.Event('pointerdown',{bubbles:true,cancelable:true});Object.assign(e,{clientX:105,clientY:105,button:0,pointerId:1,pointerType:'mouse'});$('heat-grid').dispatchEvent(e);assert.match($('selection-title').textContent,/11, 11/);assert.equal($('temp-c').textContent,'80℃');
+assert.equal($('compact-explanation').textContent,$('explanation').textContent,'compact help keeps the current explanation');
 console.log('PASS: actual heat UI script in jsdom; painting, preset, boundaries, keyboard navigation, step/play/pause/reset, parameter clamps and low-r explanation. Not a browser/layout/input-device test.');w.close();
 }
