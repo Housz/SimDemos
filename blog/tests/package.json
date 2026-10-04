@@ -1,0 +1,10 @@
+{
+  "name": "simdemos-blog-tests",
+  "private": true,
+  "scripts": {
+    "test": "node --test *.test.cjs && node dom-smoke.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}

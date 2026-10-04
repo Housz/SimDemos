@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>拉普拉斯：曲面、截线与五点差分</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans SC",sans-serif;color:#242b34;background:#fff;font-synthesis:none;--blue:#2563b5;--red:#c45137;--line:#e1e5e9;--muted:#606975}
+*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{background:#fff;color:inherit;border:1px solid #cbd1d8;border-radius:5px}button{cursor:pointer;min-height:32px;padding:4px 10px}button:hover{background:#f1f4f7}button[aria-pressed=true]{background:#e9f1fc;border-color:#2563b5;color:#164c92}button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #78a6e5;outline-offset:2px}a{color:#315b8c;text-underline-offset:3px}h1,p{margin:0}h1{font-size:16px;letter-spacing:.02em;font-weight:650}.app{max-width:1120px;margin:auto;padding:12px 16px 10px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;height:28px}.top a{font-size:12px;white-space:nowrap}.preset-row{display:flex;align-items:center;gap:10px;margin:7px 0 5px;min-height:32px;font-size:13px}.preset-row select{height:32px;max-width:100%;padding:3px 6px}.formula{font-family:Georgia,"Times New Roman",serif;font-size:18px;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 294px;gap:18px;min-height:340px}.visual{min-width:0}.stage{position:relative;isolation:isolate;height:288px;overflow:hidden;touch-action:pan-y;background:#fff;border-bottom:1px solid var(--line)}.stage canvas,.stage>svg{display:block;width:100%;height:100%;position:absolute;inset:0}.stage canvas{z-index:1;touch-action:pan-y}.stage canvas[hidden],.stage>svg[hidden]{display:none}.point-labels{position:absolute;inset:0;z-index:2;pointer-events:none}.point-label{position:absolute;transform:translate(-50%,-50%);font-size:12px;font-weight:650;white-space:nowrap;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white}.axis-label{font-style:italic;color:#59636e}.legend{position:absolute;top:6px;left:6px;z-index:3;display:flex;gap:12px;font-size:12px;pointer-events:none;background:#ffffffdb;padding:3px 4px}.blue{color:var(--blue)}.red{color:var(--red)}.legend i{display:inline-block;width:16px;border-top:3px solid currentColor;vertical-align:middle;margin-right:4px}.view-tools{display:flex;flex-wrap:wrap;gap:5px;padding-top:7px}.view-tools button{padding:3px 8px;font-size:12px}.controls{padding-top:5px;min-width:0}.sliders{display:grid;gap:6px}.slider-label{display:flex;justify-content:space-between;font-size:12px;font-weight:500;gap:6px}.slider-label output{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}input[type=range]{width:100%;display:block;margin:5px 0 4px;accent-color:#596a7d;height:17px;cursor:pointer}.math{margin-top:9px;border-top:1px solid var(--line);padding-top:8px;font-size:12px;font-variant-numeric:tabular-nums}.math-row{display:grid;grid-template-columns:53px 1fr 1fr 1fr;gap:4px;align-items:baseline;margin:5px 0}.math-row .row-label{color:var(--muted);font-size:11px}.math-row strong{font-size:14px;font-weight:650}.samples{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:9px}.samples span{font-size:11px;color:var(--muted)}.samples strong{display:block;color:#303943;font-size:12px;font-weight:550;padding-top:3px}.average{margin-top:8px;color:#4c5662;font-size:11px;line-height:1.7}.average strong{font-weight:600}.reading{font-size:12px;line-height:1.65;min-height:40px;padding:7px 0 2px;color:#48525f}.note{display:flex;flex-wrap:wrap;justify-content:space-between;gap:3px 12px;border-top:1px solid var(--line);padding-top:6px;margin-top:6px;font-size:11px;color:var(--muted);line-height:1.6}.status{font-size:10px;color:#717a85}.details{font-size:12px;color:#505b68;line-height:1.8;margin-top:9px}.details summary{cursor:pointer;width:fit-content}.details p{margin:6px 0}.details code{font-family:inherit;background:#f4f6f8;padding:2px 4px}.noscript{background:#fff4d4;padding:10px;font-size:13px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:680px){.app{padding:8px 10px}.top{height:25px}h1{font-size:14px}.top a{font-size:11px}.preset-row{gap:7px;margin:5px 0 0}.preset-row label{font-size:12px}.preset-row select{max-width:145px;font-size:12px}.formula{font-size:16px}.layout{display:flex;flex-direction:column;gap:0;min-height:0}.stage{height:182px}.view-tools{gap:4px;padding-top:5px}.view-tools button{min-height:30px;font-size:11px;padding:3px 7px}.controls{padding-top:8px}.sliders{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.slider-label{font-size:11px;gap:3px}.slider-label output{font-size:11px}.math{padding-top:3px;margin-top:4px}.math-row{grid-template-columns:47px 1fr 1fr 1fr;margin:3px 0}.math-row{line-height:1.15}.math-row strong{font-size:13px}.samples{margin-top:5px;line-height:1.15}.samples strong{padding-top:1px}.average{margin-top:4px;line-height:1.4}.reading{min-height:0;padding-top:5px;font-size:11px}.note{margin-top:5px;font-size:10px;padding-top:4px;line-height:1.4}.details{margin-top:6px}.legend{font-size:11px;gap:8px}}
+@media(min-width:681px) and (min-height:620px){.app{padding-top:24px}.stage{height:380px}.layout{min-height:430px}.controls{padding-top:20px}.sliders{gap:13px}.math{margin-top:18px}.reading{padding-top:15px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.156.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.156.0/examples/jsm/"}}</script>
+</head>
+<body>
+<main class="app">
+<header class="top"><h1>拉普拉斯：两个方向相加</h1><a id="open-page" href="laplacian.html" target="_blank" rel="noopener">独立打开 ↗</a></header>
+<div class="preset-row"><label for="preset">曲面</label><select id="preset"><option value="bowl">向上的碗</option><option value="inverted">向下的碗</option><option value="plane">斜平面</option><option value="saddle">鞍面</option><option value="quartic">四次函数 · 看误差</option></select><span id="formula" class="formula">f = x² + y²</span></div>
+<div class="layout">
+<section class="visual" aria-label="函数曲面与采样点">
+<div id="stage" class="stage">
+<svg id="fallback" viewBox="0 0 640 400" role="img" aria-labelledby="plot-title plot-desc"><title id="plot-title">向上的碗的曲面与截线</title><desc id="plot-desc">蓝色是 x 方向截线，红色是 y 方向截线，黄色是中心和四个邻点。各方向的二阶导数为 2，和为 4。</desc><g fill="none" stroke="#c8cdd3" stroke-width="1.5"><path d="M100 165 Q320 370 540 165 M135 140 Q320 310 505 140 M170 120 Q320 250 470 120 M100 165 Q155 245 320 285 Q485 245 540 165"/><path d="M160 150 Q260 365 450 200" stroke="#2563b5" stroke-width="4"/><path d="M480 150 Q380 365 190 200" stroke="#c45137" stroke-width="4"/></g><circle cx="320" cy="285" r="6" fill="#f6ce52" stroke="#947426"/></svg>
+<div id="labels" class="point-labels" hidden></div>
+<div class="legend"><span class="blue"><i></i>x 截线</span><span class="red"><i></i>y 截线</span><span>● 五点采样</span></div>
+</div>
+<div class="view-tools" role="group" aria-label="视角控制"><button id="interact" type="button" aria-pressed="false" title="启用后可在图中拖动旋转；关闭时触摸会滚动正文">拖动：关</button><button id="rotate-left" type="button" aria-label="视角向左旋转">↶ 左转</button><button id="rotate-right" type="button" aria-label="视角向右旋转">右转 ↷</button><button id="zoom-in" type="button" aria-label="放大视角">＋</button><button id="zoom-out" type="button" aria-label="缩小视角">−</button><button id="reset" type="button">重置视角</button></div>
+</section>
+<section class="controls" aria-label="采样与计算">
+<div class="sliders">
+<div><label class="slider-label" for="center-x">中心 x₀ <output id="x-value" for="center-x">0.00</output></label><input id="center-x" type="range" min="-0.8" max="0.8" step="0.05" value="0" aria-describedby="range-note"></div>
+<div><label class="slider-label" for="center-y">中心 y₀ <output id="y-value" for="center-y">0.00</output></label><input id="center-y" type="range" min="-0.8" max="0.8" step="0.05" value="0" aria-describedby="range-note"></div>
+<div><label class="slider-label" for="spacing">间距 h <output id="h-value" for="spacing">0.60</output></label><input id="spacing" type="range" min="0.1" max="0.8" step="0.05" value="0.6" aria-describedby="range-note"></div>
+</div>
+<div class="math" aria-label="解析值与五点差分的比较">
+<div class="math-row"><span class="row-label">解析</span><span class="blue">f<sub>xx</sub> = <strong id="fxx">2</strong></span><span class="red">f<sub>yy</sub> = <strong id="fyy">2</strong></span><span>Δf = <strong id="exact">4</strong></span></div>
+<div class="math-row"><span class="row-label">差分</span><span class="blue">x: <strong id="dx">2</strong></span><span class="red">y: <strong id="dy">2</strong></span><span>Δₕf = <strong id="discrete">4</strong></span></div>
+<div class="samples" aria-label="五个采样点的函数值"><span>C 中心<strong id="sample-c">0</strong></span><span>E +x<strong id="sample-e">0.36</strong></span><span>W −x<strong id="sample-w">0.36</strong></span><span>N +y<strong id="sample-n">0.36</strong></span><span>S −y<strong id="sample-s">0.36</strong></span></div>
+<p class="average">四邻均值 μ = <strong id="mean">0.36</strong>；μ − f<sub>C</sub> = <strong id="gap">0.36</strong><br>Δₕf = 4(μ − f<sub>C</sub>)/h²；绝对误差 <strong id="error">0</strong></p>
+</div>
+<p class="reading" id="reading">两个方向都向上弯曲，2 + 2 = 4。</p>
+</section>
+</div>
+<footer class="note"><span id="range-note">坐标范围 ±1.6；高度统一压缩为 1/2。滚轮始终用于正文滚动。</span><span id="status" class="status" role="status">SVG 已就绪，正在载入 3D…</span></footer>
+<details class="details"><summary>公式与操作说明</summary><p>固定 y = y₀ 得到蓝色 x 截线；固定 x = x₀ 得到红色 y 截线。高度显示 f(x, y)，各曲面使用同一坐标范围、视角和高度比例。</p><p>x 方向差分：(f<sub>E</sub> − 2f<sub>C</sub> + f<sub>W</sub>)/h²；y 方向差分：(f<sub>N</sub> − 2f<sub>C</sub> + f<sub>S</sub>)/h²。这里的邻均不包含中心 C。E/W 指定义域 x 的正/负方向，N/S 指 y 的正/负方向；与旋转后的屏幕方向无关。</p><p>三个二次曲面与斜平面的差分恰好等于解析值（浮点舍入误差除外）。选“四次函数”，可看到 Δf = 3x₀² + 3y₀²，Δₕf = Δf + h²；h 减半，误差缩小到四分之一。二阶导数相加为零不代表曲面是平面。</p><p>滑块可用方向键调整，所有视角按钮可用键盘操作。默认不捕获触摸拖动；打开“拖动”后可旋转，结束后关闭即可继续滑动正文。放大缩小请用 ＋ / −。如果 WebGL 或网络不可用，SVG 投影仍支持所有参数和视角按钮。网址加 <code>?renderer=svg</code> 可主动使用无网络版本。</p></details>
+<noscript><p class="noscript">JavaScript 未开启。上图展示 f=x²+y²：fxx=2，fyy=2，Δf=4；h=0.6 时四邻均值为0.36。开启 JavaScript 后可调整参数。</p></noscript>
+</main>
+<script id="laplacian-math">
+/* Pure, dependency-free numerical model. Extracted verbatim by tests/laplacian.test.cjs. */
+globalThis.LaplacianMath = (() => {
+  'use strict';
+  const presets = Object.freeze({
+    bowl: Object.freeze({ name: '向上的碗', formula: 'f = x² + y²', f: (x,y) => x*x+y*y, fxx: () => 2, fyy: () => 2 }),
+    inverted: Object.freeze({ name: '向下的碗', formula: 'f = −x² − y²', f: (x,y) => -x*x-y*y, fxx: () => -2, fyy: () => -2 }),
+    plane: Object.freeze({ name: '斜平面', formula: 'f = x + y', f: (x,y) => x+y, fxx: () => 0, fyy: () => 0 }),
+    saddle: Object.freeze({ name: '鞍面', formula: 'f = x² − y²', f: (x,y) => x*x-y*y, fxx: () => 2, fyy: () => -2 }),
+    quartic: Object.freeze({ name: '四次函数', formula: 'f = (x⁴ + y⁴)/4', f: (x,y) => (x**4+y**4)/4, fxx: x => 3*x*x, fyy: (x,y) => 3*y*y })
+  });
+  function evaluate(key, x, y, h) {
+    if (!Object.hasOwn(presets,key)) throw new RangeError('Unknown preset');
+    if (![x,y,h].every(Number.isFinite) || h <= 0) throw new RangeError('Finite coordinates and h > 0 required');
+    const p = presets[key];
+    const C = p.f(x,y), E = p.f(x+h,y), W = p.f(x-h,y), N = p.f(x,y+h), S = p.f(x,y-h);
+    const dx = (E - 2*C + W)/(h*h), dy = (N - 2*C + S)/(h*h);
+    const fxx = p.fxx(x,y), fyy = p.fyy(x,y), exact = fxx+fyy, discrete = dx+dy;
+    const mean = (E+W+N+S)/4;
+    return {C,E,W,N,S,dx,dy,fxx,fyy,exact,discrete,mean,gap:mean-C,error:Math.abs(discrete-exact)};
+  }
+  return Object.freeze({presets,evaluate});
+})();
+</script>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const model = globalThis.LaplacianMath;
+  const state = {preset:'bowl',x:0,y:0,h:0.6};
+  const initialView = {az:-Math.PI/3,elev:0.62,zoom:1};
+  const view = {...initialView};
+  const domain = 1.6, zScale = 0.5;
+  const params = new URLSearchParams(location.search);
+  if (Object.hasOwn(model.presets,params.get('preset'))) state.preset = params.get('preset');
+  $('preset').value = state.preset;
+  let engine = null, dragging = false, pointer = null;
+  const fmt = n => Math.abs(n)<5e-8 ? '0' : Number(n.toFixed(4)).toString();
+  const pointList = () => {
+    const p = model.presets[state.preset], {x,y,h} = state;
+    return [['C',x,y],['E',x+h,y],['W',x-h,y],['N',x,y+h],['S',x,y-h]].map(([name,x,y]) => ({name,x,y,z:p.f(x,y)*zScale}));
+  };
+  // Both renderers share screen-space label placement. Labels stay readable even
+  // when h is small; thin leaders distinguish labels from the actual yellow samples.
+  function placeLabels(points, width, height) {
+    const center = points.find(p => p.name === 'C');
+    const labels = points.map(p => {
+      if (p.name === 'C') return {...p, lx:p.px, ly:p.py+19};
+      const dx=p.px-center.px, dy=p.py-center.py, length=Math.hypot(dx,dy)||1;
+      const radius=Math.max(32,length+13);
+      return {...p,lx:center.px+dx/length*radius,ly:center.py+dy/length*radius};
+    });
+    const clamp = p => {p.lx=Math.max(12,Math.min(width-12,p.lx));p.ly=Math.max(12,Math.min(height-12,p.ly));};
+    labels.forEach(clamp);
+    for(let pass=0;pass<16;pass++)for(let i=0;i<labels.length;i++)for(let j=i+1;j<labels.length;j++){
+      const a=labels[i],b=labels[j],dx=b.lx-a.lx,dy=b.ly-a.ly;
+      if(Math.abs(dx)>=22||Math.abs(dy)>=18)continue;
+      const sx=Math.sign(dx)||1,sy=Math.sign(dy)||1;
+      const moveX=22-Math.abs(dx),moveY=18-Math.abs(dy);
+      const factor=a.name==='C'?1:.5;
+      if(moveX<moveY){b.lx+=sx*moveX*factor;if(a.name!=='C')a.lx-=sx*moveX/2;}
+      else {b.ly+=sy*moveY*factor;if(a.name!=='C')a.ly-=sy*moveY/2;}
+      clamp(a);clamp(b);
+    }
+    return labels;
+  }
+  function updateNumbers() {
+    const p = model.presets[state.preset], r = model.evaluate(state.preset,state.x,state.y,state.h);
+    $('formula').textContent = p.formula;
+    for (const [id,key] of Object.entries({fxx:'fxx',fyy:'fyy',exact:'exact',dx:'dx',dy:'dy',discrete:'discrete',mean:'mean',gap:'gap',error:'error','sample-c':'C','sample-e':'E','sample-w':'W','sample-n':'N','sample-s':'S'})) $(id).textContent = fmt(r[key]);
+    $('x-value').textContent = state.x.toFixed(2); $('y-value').textContent = state.y.toFixed(2); $('h-value').textContent = state.h.toFixed(2);
+    const reading = {
+      bowl: '两个方向都向上弯曲，2 + 2 = 4。',
+      inverted: '两个方向都向下弯曲，−2 − 2 = −4。',
+      plane: '函数值在增加，但斜率不变：0 + 0 = 0。',
+      saddle: '一个方向向上、一个方向向下：2 − 2 = 0。',
+      quartic: `有限间距有误差：Δₕf − Δf = h² = ${fmt(state.h**2)}。试着把 h 减半。`
+    };
+    $('reading').textContent = reading[state.preset];
+    const ownURL = new URL(location.href); ownURL.searchParams.set('preset',state.preset);
+    $('open-page').href = ownURL.href;
+    $('stage').setAttribute('aria-label',`${p.name}，${p.formula}。中心 (${fmt(state.x)}, ${fmt(state.y)})，间距 ${fmt(state.h)}。解析拉普拉斯 ${fmt(r.exact)}，差分 ${fmt(r.discrete)}。`);
+  }
+  // The fallback uses the same orthographic projection and height scale as WebGL.
+  function renderSVG() {
+    const width = Math.max($('stage').clientWidth,200), height = Math.max($('stage').clientHeight,150);
+    const halfHeight = 3.6, scale = height/(2*halfHeight)*view.zoom;
+    const c=Math.cos(view.az), s=Math.sin(view.az), ce=Math.cos(view.elev), se=Math.sin(view.elev);
+    const project = (x,y,z) => [width/2+(-s*x+c*y)*scale,height/2-(-se*c*x-se*s*y+ce*z)*scale];
+    const path = points => points.map(([x,y,z],i) => {const a=project(x,y,z);return (i?'L':'M')+a.map(n=>n.toFixed(2)).join(',');}).join(' ');
+    const line = (points,color,stroke=1.1,extra='') => `<path d="${path(points)}" fill="none" stroke="${color}" stroke-width="${stroke}" ${extra}/>`;
+    const p=model.presets[state.preset], curve=(fixed,axis)=>Array.from({length:81},(_,i)=>{const v=-domain+2*domain*i/80,x=axis==='x'?v:fixed,y=axis==='x'?fixed:v;return [x,y,p.f(x,y)*zScale];});
+    let content = `<title id="plot-title">${p.name}的曲面与五点采样</title><desc id="plot-desc">蓝色为 x 截线，红色为 y 截线。黄色点为 C、E、W、N、S。函数值和二阶导数列在图旁。</desc>`;
+    for(let i=0;i<=16;i++){const t=-domain+i*.2;content+=line(curve(t,'x'),'#c8cdd3')+line(curve(t,'y'),'#c8cdd3');}
+    const axisEnds = [['x',1.95,0,0],['y',0,1.95,0],['f',0,0,2.8]];
+    for(const [name,x,y,z] of axisEnds){content+=line([[0,0,0],[x,y,z]],'#929ba5',1,'stroke-dasharray="3 3"');const a=project(x,y,z);content+=`<text x="${a[0]+5}" y="${a[1]-4}" fill="#626c77" font-size="12" font-style="italic">${name}</text>`;}
+    content+=line(curve(state.y,'x'),'#2563b5',2.8)+line(curve(state.x,'y'),'#c45137',2.8);
+    const points=pointList();
+    for(const a of points.slice(1)) content+=line([[state.x,state.y,p.f(state.x,state.y)*zScale],[a.x,a.y,a.z]],'#947426',1,'stroke-dasharray="2 3"');
+    const labels=placeLabels(points.map(p=>{const q=project(p.x,p.y,p.z);return {...p,px:q[0],py:q[1]};}),width,height);
+    for(const a of labels){content+=`<line x1="${a.px}" y1="${a.py}" x2="${a.lx}" y2="${a.ly}" stroke="#a9a084" stroke-width=".7"/><circle cx="${a.px}" cy="${a.py}" r="${a.name==='C'?5:4}" fill="#f6ce52" stroke="#8f722c" stroke-width="1.2"/><text x="${a.lx}" y="${a.ly}" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3e4550" paint-order="stroke" stroke="white" stroke-width="3">${a.name}</text>`;}
+    $('fallback').setAttribute('viewBox',`0 0 ${width} ${height}`);
+    $('fallback').innerHTML = content;
+  }
+  function render() { if(engine) engine.render(); else renderSVG(); }
+  function update() { updateNumbers(); if(engine) engine.rebuild(); render(); }
+  function moveCamera() { if(engine) engine.applyView(); render(); }
+  for(const [id,key] of [['center-x','x'],['center-y','y'],['spacing','h']]) $(id).addEventListener('input',e=>{state[key]=Number(e.target.value);update();});
+  $('preset').addEventListener('change',e=>{state.preset=e.target.value;update();});
+  $('rotate-left').addEventListener('click',()=>{view.az-=Math.PI/12;moveCamera();});
+  $('rotate-right').addEventListener('click',()=>{view.az+=Math.PI/12;moveCamera();});
+  $('zoom-in').addEventListener('click',()=>{view.zoom=Math.min(2.1,view.zoom*1.15);moveCamera();});
+  $('zoom-out').addEventListener('click',()=>{view.zoom=Math.max(.65,view.zoom/1.15);moveCamera();});
+  $('reset').addEventListener('click',()=>{Object.assign(view,initialView);moveCamera();});
+  $('interact').addEventListener('click',()=>{dragging=!dragging;pointer=null;$('interact').setAttribute('aria-pressed',String(dragging));$('interact').textContent=`拖动：${dragging?'开':'关'}`;$('stage').style.touchAction=dragging?'none':'pan-y';if(engine)engine.setInteraction(dragging);});
+  $('stage').addEventListener('pointerdown',e=>{if(!dragging||engine)return;pointer={x:e.clientX,y:e.clientY,id:e.pointerId};$('stage').setPointerCapture(e.pointerId);});
+  $('stage').addEventListener('pointermove',e=>{if(!pointer||engine||e.pointerId!==pointer.id)return;view.az-=(e.clientX-pointer.x)*.01;view.elev=Math.max(.15,Math.min(1.4,view.elev+(e.clientY-pointer.y)*.008));pointer={x:e.clientX,y:e.clientY,id:e.pointerId};renderSVG();});
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])$('stage').addEventListener(type,()=>{pointer=null;});
+  const resize = ()=>{if(engine)engine.resize();render();};
+  if('ResizeObserver' in window)new ResizeObserver(resize).observe($('stage'));else window.addEventListener('resize',resize);
+  update();
+  async function startThree() {
+    if(params.get('renderer')==='svg'){$('status').textContent='SVG 投影 · 无需网络';return;}
+    try {
+      const [THREE,{OrbitControls}] = await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js')]);
+      const canvas=document.createElement('canvas');canvas.setAttribute('aria-label','交互式曲面；数值与操作按钮在图旁');canvas.setAttribute('role','img');
+      const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setClearColor(0xffffff,1);
+      const scene=new THREE.Scene(), camera=new THREE.OrthographicCamera(-4,4,3.6,-3.6,.1,100);camera.up.set(0,0,1);
+      const orbit=new OrbitControls(camera,canvas);orbit.enableZoom=false;orbit.enablePan=false;orbit.enableDamping=false;orbit.minPolarAngle=.17;orbit.maxPolarAngle=Math.PI/2-.15;orbit.target.set(0,0,0);
+      let group = new THREE.Group();scene.add(group);
+      let pointLabels=[];
+      function line(points,color,width=1) {const g=new THREE.BufferGeometry().setFromPoints(points.map(p=>new THREE.Vector3(...p)));const m=new THREE.LineBasicMaterial({color,linewidth:width});const l=new THREE.Line(g,m);group.add(l);return l;}
+      function disposeGroup(){group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});scene.remove(group);group=new THREE.Group();scene.add(group);}
+      function rebuild(){
+        disposeGroup();const p=model.presets[state.preset];const curve=(fixed,axis)=>Array.from({length:97},(_,i)=>{const v=-domain+2*domain*i/96,x=axis==='x'?v:fixed,y=axis==='x'?fixed:v;return [x,y,p.f(x,y)*zScale];});
+        for(let i=0;i<=16;i++){const t=-domain+i*.2;line(curve(t,'x'),0xc8cdd3);line(curve(t,'y'),0xc8cdd3);}
+        // Tube geometry gives the colored sections consistent thickness on WebGL implementations
+        // where LineBasicMaterial.linewidth is always 1.
+        function section(points,color){const c=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));const g=new THREE.TubeGeometry(c,128,.015,5,false);group.add(new THREE.Mesh(g,new THREE.MeshBasicMaterial({color,depthTest:false})));}
+        section(curve(state.y,'x'),0x2563b5);section(curve(state.x,'y'),0xc45137);
+        const pts=pointList();
+        for(const p of pts){const sphere=new THREE.Mesh(new THREE.SphereGeometry(p.name==='C'?.045:.034,14,10),new THREE.MeshBasicMaterial({color:0xf1c84e,depthTest:false}));sphere.position.set(p.x,p.y,p.z);sphere.renderOrder=5;group.add(sphere);}
+        const axes=[{name:'x',x:1.95,y:0,z:0},{name:'y',x:0,y:1.95,z:0},{name:'f',x:0,y:0,z:2.8}];
+        for(const p of axes)line([[0,0,0],[p.x,p.y,p.z]],0x929ba5);
+        $('labels').replaceChildren();pointLabels=[...pts,...axes].map(p=>{const el=document.createElement('span');el.className='point-label'+('xyf'.includes(p.name)?' axis-label':'');el.textContent=p.name;$('labels').appendChild(el);return {name:p.name,el,position:new THREE.Vector3(p.x,p.y,p.z)};});
+      }
+      function renderWebGL(){
+        renderer.render(scene,camera);
+        const width=$('stage').clientWidth,height=$('stage').clientHeight;
+        const projected=pointLabels.map(p=>{const v=p.position.clone().project(camera);return {...p,px:(v.x+1)*width/2,py:(1-v.y)*height/2,visible:Math.abs(v.x)<1&&Math.abs(v.y)<1};});
+        const samples=projected.filter(p=>'CEWNS'.includes(p.name));
+        const placed=samples.length?placeLabels(samples,width,height):[];
+        // SVG leaders overlay the WebGL canvas; sample locations still come from
+        // Three's camera matrices, not from an independent approximation.
+        let leaders=$('labels').querySelector('svg');
+        if(!leaders){leaders=document.createElementNS('http://www.w3.org/2000/svg','svg');leaders.style.cssText='position:absolute;inset:0;width:100%;height:100%;overflow:visible';$('labels').prepend(leaders);}
+        leaders.setAttribute('viewBox',`0 0 ${width} ${height}`);
+        leaders.innerHTML=placed.filter(p=>p.visible).map(p=>`<line x1="${p.px}" y1="${p.py}" x2="${p.lx}" y2="${p.ly}" stroke="#a9a084" stroke-width=".7"/>`).join('');
+        for(const p of [...placed,...projected.filter(p=>'xyf'.includes(p.name)).map(p=>({...p,lx:p.px+6,ly:p.py-6}))]){p.el.style.left=`${p.lx}px`;p.el.style.top=`${p.ly}px`;p.el.style.display=p.visible?'':'none';}
+      }
+      function applyView(){const r=10;camera.position.set(r*Math.cos(view.elev)*Math.cos(view.az),r*Math.cos(view.elev)*Math.sin(view.az),r*Math.sin(view.elev));camera.zoom=view.zoom;camera.updateProjectionMatrix();camera.lookAt(0,0,0);orbit.update();}
+      function resizeWebGL(){const w=Math.max($('stage').clientWidth,1),h=Math.max($('stage').clientHeight,1);renderer.setSize(w,h,false);camera.left=-3.6*w/h;camera.right=3.6*w/h;camera.top=3.6;camera.bottom=-3.6;camera.updateProjectionMatrix();}
+      function setInteraction(enabled){orbit.enabled=enabled;canvas.style.touchAction=enabled?'none':'pan-y';}
+      orbit.addEventListener('change',()=>{const p=camera.position;view.az=Math.atan2(p.y,p.x);view.elev=Math.asin(p.z/p.length());view.zoom=camera.zoom;renderWebGL();});
+      const instance={render:renderWebGL,rebuild,applyView,resize:resizeWebGL,setInteraction};
+      canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(engine!==instance)return;engine=null;orbit.dispose();canvas.remove();$('labels').hidden=true;$('fallback').hidden=false;$('status').textContent='WebGL 已中断，已切换 SVG 投影';renderSVG();},{once:true});
+      $('stage').prepend(canvas);engine=instance;setInteraction(dragging);resizeWebGL();applyView();rebuild();renderWebGL();$('fallback').hidden=true;$('labels').hidden=false;$('status').textContent='Three.js 0.156.0 · 正交视角';
+    }catch(error){
+      engine=null;$('stage').querySelectorAll('canvas').forEach(c=>c.remove());$('labels').hidden=true;$('fallback').hidden=false;$('status').textContent='3D 不可用 · SVG 投影与计算仍可用';renderSVG();
+      // No reload loop or automatic network retries. The numerical model has no CDN dependency.
+    }
+  }
+  startThree();
+})();
+</script>
+</body>
+</html>
