@@ -10,6 +10,9 @@
 @media(min-width:541px){.inspector{display:grid;grid-template-columns:110px minmax(155px,1fr);gap:4px 14px;max-width:500px}.inspector h2{grid-column:1/-1}.thermometers{grid-column:1;grid-row:2 / span 2;width:110px}.thermometers strong{font-size:11px}.thermometers span{font-size:10px}.thermometers div{padding:3px 1px}.numbers{grid-column:2;grid-row:2;font-size:12px}.formula{grid-column:2;grid-row:3;margin:2px 0}.explanation{grid-column:1/-1;margin-top:4px;min-height:28px}}
 @media(max-width:540px){main{padding:9px 10px}header{margin-bottom:7px}h1{font-size:16px}header p{display:none}.toolbar{gap:6px 9px;font-size:11px}select{min-height:28px;padding-left:4px}#preset{width:96px}#boundary{width:133px}.workspace{grid-template-columns:minmax(140px,1.15fr) minmax(130px,1fr);gap:10px;padding-top:8px}.field svg{height:auto}.inspector h2{font-size:12px}.thermometers{gap:2px;margin-bottom:5px}.thermometers div{min-height:31px;padding:1px}.thermometers strong{font-size:11px}.thermometers span{font-size:10px}.numbers{font-size:12px;gap:2px 5px}.formula{font-size:11px;margin-top:5px}.explanation{font-size:12px;min-height:29px}.transport{gap:5px;margin-top:7px}button{padding:4px 8px;min-height:29px}.clock{font-size:11px}.brush{gap:6px 9px;font-size:11px;padding-top:7px}.brush input[type=number]{width:50px;min-height:27px}.brush input[type=range]{width:50px}.parameters{gap:5px 8px;font-size:10px;padding-top:6px}.parameters input{width:51px;min-height:26px}.r-value{font-size:11px}.footnote,.status{font-size:11px}.legend{font-size:11px;gap:4px}.help{font-size:10px}}
 @media(max-width:420px){.numbers{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 5px}.numbers dt,.numbers dd{min-width:0;overflow-wrap:anywhere}.numbers dd{text-align:right;margin:0}}
+.short-only{display:none}
+@media(max-height:360px){main{padding:6px 10px}header{margin-bottom:5px}h1{font-size:16px}.setup{padding-bottom:5px}.toolbar{font-size:11px;gap:6px 10px}select{min-height:26px}.workspace{grid-template-columns:150px minmax(0,1fr);gap:12px;padding-top:6px}.field svg{max-width:150px}.inspector{display:block;max-width:none}.inspector h2{font-size:12px;margin:0 0 4px}.thermometers{grid-template-columns:repeat(5,minmax(0,1fr));width:auto;max-width:none;gap:2px;margin:0 0 5px}.thermometers div{grid-area:auto;min-height:32px;padding:2px 1px;white-space:normal;overflow-wrap:anywhere}.thermometers .center{order:0}.thermometers .east{order:1}.thermometers .west{order:2}.thermometers .north{order:3}.thermometers .south{order:4}.thermometers strong{font-size:12px}.thermometers span{font-size:10px}.numbers{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2px 6px;font-size:12px}.numbers dt,.numbers dd{min-width:0;overflow-wrap:anywhere}.numbers dd{margin:0;text-align:right}.inspector .formula,.inspector .explanation{display:none}.help .short-only{display:block}.transport{margin-top:4px;gap:5px}.transport button{min-height:28px;padding:3px 8px}.brush{padding:5px 0 4px;gap:6px 9px;font-size:11px}.brush input[type=number]{width:50px;min-height:27px}.brush input[type=range]{width:50px}}
+@media(max-height:360px) and (max-width:420px){.workspace{grid-template-columns:110px minmax(0,1fr);gap:8px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 </head>
@@ -55,7 +58,7 @@
   <p id="boundary-note" class="footnote"></p>
   <p id="summary" class="footnote"></p>
   <p id="status" class="status" role="status" aria-live="polite">点选查看；开启「绘制初值」后可拖动涂色。</p>
-  <details class="help"><summary>操作与计算说明</summary><p id="keyboard-help">网格获得焦点后，用方向键移动选中格；开启绘制后按空格或回车涂色。开启绘制会暂停并恢复已保存的初值，修改自动保存。关闭绘制后，触摸上下滑动可滚动文章。恒温边界不可涂色。</p><p>21 × 21 格。每步先读取完整旧数组，再写入另一数组。采用二维五点显式格式，r = αΔt/h² ≤ 1/4；参数变更时会自动缩短过大的 Δt。播放每秒推进约 10 步；t 是累计物理时间。h 改变格子间距与区域尺寸，格数不变。温度色标始终固定在 0–100℃。</p></details>
+  <details class="help"><summary>操作与计算说明</summary><p class="short-only formula">ΔₕT = 4(m − T<sub>C</sub>)/h²<br>T<sub>C</sub> 下一步 = T<sub>C</sub> + 4r(m − T<sub>C</sub>)</p><p id="compact-explanation" class="short-only explanation"></p><p id="keyboard-help">网格获得焦点后，用方向键移动选中格；开启绘制后按空格或回车涂色。开启绘制会暂停并恢复已保存的初值，修改自动保存。关闭绘制后，触摸上下滑动可滚动文章。恒温边界不可涂色。</p><p>21 × 21 格。每步先读取完整旧数组，再写入另一数组。采用二维五点显式格式，r = αΔt/h² ≤ 1/4；参数变更时会自动缩短过大的 Δt。播放每秒推进约 10 步；t 是累计物理时间。h 改变格子间距与区域尺寸，格数不变。温度色标始终固定在 0–100℃。</p></details>
   <span id="selection-announcement" class="sr-only" aria-live="polite"></span>
 </main>
 <script id="heat-engine">
@@ -242,6 +245,7 @@
     $('next-temp').textContent = f(q.next, 3) + '℃';
     $('explanation').textContent = q.fixed ? '恒温边界由外界维持，不参与内部更新。' : q.mean === q.c ? '中心等于四邻平均，本步温度不变。' : q.mean > q.c ? '四邻平均更暖，这一格将升温。' : '四邻平均更冷，这一格将降温。';
     if (!q.fixed && Object.values(outside).some(Boolean)) $('explanation').textContent += ' 缺邻取自身，边界零通量。';
+    $('compact-explanation').textContent = $('explanation').textContent;
     svg.setAttribute('aria-activedescendant', 'cell-' + selected.x + '-' + selected.y);
     cells.forEach((cell, index) => cell.setAttribute('aria-selected', index === selected.y * model.n + selected.x ? 'true' : 'false'));
     overlays.forEach(({ rect, text, dx, dy }) => {

@@ -10,6 +10,38 @@
 *{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{background:#fff;color:inherit;border:1px solid #cbd1d8;border-radius:5px}button{cursor:pointer;min-height:32px;padding:4px 10px}button:hover{background:#f1f4f7}button[aria-pressed=true]{background:#e9f1fc;border-color:#2563b5;color:#164c92}button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #78a6e5;outline-offset:2px}a{color:#315b8c;text-underline-offset:3px}h1,p{margin:0}h1{font-size:16px;letter-spacing:.02em;font-weight:650}.app{max-width:1120px;margin:auto;padding:12px 16px 10px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;height:28px}.top a{font-size:12px;white-space:nowrap}.preset-row{display:flex;align-items:center;gap:10px;margin:7px 0 5px;min-height:32px;font-size:13px}.preset-row select{height:32px;max-width:100%;padding:3px 6px}.formula{font-family:Georgia,"Times New Roman",serif;font-size:18px;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 294px;gap:18px;min-height:340px}.visual{min-width:0}.stage{position:relative;isolation:isolate;height:288px;overflow:hidden;touch-action:pan-y;background:#fff;border-bottom:1px solid var(--line)}.stage canvas,.stage>svg{display:block;width:100%;height:100%;position:absolute;inset:0}.stage canvas{z-index:1;touch-action:pan-y}.stage canvas[hidden],.stage>svg[hidden]{display:none}.point-labels{position:absolute;inset:0;z-index:2;pointer-events:none}.point-label{position:absolute;transform:translate(-50%,-50%);font-size:12px;font-weight:650;white-space:nowrap;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white}.axis-label{font-style:italic;color:#59636e}.legend{position:absolute;top:6px;left:6px;z-index:3;display:flex;gap:12px;font-size:12px;pointer-events:none;background:#ffffffdb;padding:3px 4px}.blue{color:var(--blue)}.red{color:var(--red)}.legend i{display:inline-block;width:16px;border-top:3px solid currentColor;vertical-align:middle;margin-right:4px}.view-tools{display:flex;flex-wrap:wrap;gap:5px;padding-top:7px}.view-tools button{padding:3px 8px;font-size:12px}.controls{padding-top:5px;min-width:0}.sliders{display:grid;gap:6px}.slider-label{display:flex;justify-content:space-between;font-size:12px;font-weight:500;gap:6px}.slider-label output{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}input[type=range]{width:100%;display:block;margin:5px 0 4px;accent-color:#596a7d;height:17px;cursor:pointer}.math{margin-top:9px;border-top:1px solid var(--line);padding-top:8px;font-size:12px;font-variant-numeric:tabular-nums}.math-row{display:grid;grid-template-columns:53px 1fr 1fr 1fr;gap:4px;align-items:baseline;margin:5px 0}.math-row .row-label{color:var(--muted);font-size:11px}.math-row strong{font-size:14px;font-weight:650}.samples{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:9px}.samples span{font-size:11px;color:var(--muted)}.samples strong{display:block;color:#303943;font-size:12px;font-weight:550;padding-top:3px}.average{margin-top:8px;color:#4c5662;font-size:11px;line-height:1.7}.average strong{font-weight:600}.reading{font-size:12px;line-height:1.65;min-height:40px;padding:7px 0 2px;color:#48525f}.note{display:flex;flex-wrap:wrap;justify-content:space-between;gap:3px 12px;border-top:1px solid var(--line);padding-top:6px;margin-top:6px;font-size:11px;color:var(--muted);line-height:1.6}.status{font-size:10px;color:#717a85}.details{font-size:12px;color:#505b68;line-height:1.8;margin-top:9px}.details summary{cursor:pointer;width:fit-content}.details p{margin:6px 0}.details code{font-family:inherit;background:#f4f6f8;padding:2px 4px}.noscript{background:#fff4d4;padding:10px;font-size:13px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 @media(max-width:680px){.app{padding:8px 10px}.top{height:25px}h1{font-size:14px}.top a{font-size:11px}.preset-row{gap:7px;margin:5px 0 0}.preset-row label{font-size:12px}.preset-row select{max-width:145px;font-size:12px}.formula{font-size:16px}.layout{display:flex;flex-direction:column;gap:0;min-height:0}.stage{height:182px}.view-tools{gap:4px;padding-top:5px}.view-tools button{min-height:30px;font-size:11px;padding:3px 7px}.controls{padding-top:8px}.sliders{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.slider-label{font-size:11px;gap:3px}.slider-label output{font-size:11px}.math{padding-top:3px;margin-top:4px}.math-row{grid-template-columns:47px 1fr 1fr 1fr;margin:3px 0}.math-row{line-height:1.15}.math-row strong{font-size:13px}.samples{margin-top:5px;line-height:1.15}.samples strong{padding-top:1px}.average{margin-top:4px;line-height:1.4}.reading{min-height:0;padding-top:5px;font-size:11px}.note{margin-top:5px;font-size:10px;padding-top:4px;line-height:1.4}.details{margin-top:6px}.legend{font-size:11px;gap:8px}}
 @media(min-width:681px) and (min-height:620px){.app{padding-top:24px}.stage{height:380px}.layout{min-height:430px}.controls{padding-top:20px}.sliders{gap:13px}.math{margin-top:18px}.reading{padding-top:15px}}
+/* Short embeds (for example a 320px Notion iframe) keep the main controls first.
+   Secondary sample values and explanations remain available by normal scrolling. */
+@media(max-height:360px){
+  .app{padding:4px 10px 6px}
+  .top{height:22px}
+  .preset-row{min-height:28px;margin:3px 0 2px;gap:6px;flex-wrap:wrap;row-gap:2px}
+  .preset-row select{height:28px;padding:2px 5px}
+  .layout{min-height:0;gap:12px}
+  .stage{height:200px}
+  .view-tools{padding-top:3px;gap:4px}
+  .view-tools button{min-height:28px;padding:2px 6px}
+  .controls{padding-top:2px}
+  .sliders{gap:3px}
+  input[type=range]{margin:2px 0 1px}
+  .math{margin-top:4px;padding-top:3px}
+  .math-row{margin:2px 0}
+  .reading{min-height:0;padding-top:4px}
+  .note{margin-top:4px;padding-top:4px}
+  .details{margin-top:4px}
+}
+@media(max-height:360px) and (max-width:680px){
+  .app{padding:4px 8px 6px}
+  .layout{gap:0}
+  .stage{height:128px}
+  /* The SVG fallback's minimum 150px viewBox is scaled down in this short view. */
+  .stage>svg text{font-size:14px}
+  .preset-row{margin-bottom:0}
+  .preset-row select{max-width:142px;min-width:0}
+  .controls{padding-top:4px}
+  .sliders{gap:10px}
+  .math{margin-top:3px;padding-top:2px}
+}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.156.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.156.0/examples/jsm/"}}</script>
