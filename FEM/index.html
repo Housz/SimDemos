@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="原生 JavaScript 二维有限元制动踏板支架变形、损伤与断裂演示。">
+  <title>FEM · 制动踏板支架断裂模拟</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">F<span>·</span>E<span>·</span>M</span>
+      <span class="brand-sub">结构动力学实验室 <span class="ver">V0.1</span></span></div>
+    <a class="repo-link" href="https://github.com/Housz/SimDemos/tree/master/FEM/" target="_blank" rel="noopener noreferrer">源代码 ↗</a>
+  </header>
+  <main class="workspace">
+    <section class="mainpanel">
+      <div class="section-title"><div><p class="eyebrow">TWO-DIMENSIONAL FINITE ELEMENTS</p>
+        <h1>制动踏板支架 · 动态损伤模拟</h1></div>
+        <span id="state-badge" class="state">准备就绪</span></div>
+      <div class="sim-area">
+        <div class="sim-head"><span>简化受弯支架（非真实车型结构）</span>
+          <div class="head-tools"><label class="check"><input id="mesh-toggle" type="checkbox" checked> 显示网格</label>
+          <label class="check"><input id="damage-toggle" type="checkbox" checked> 损伤着色</label></div></div>
+        <canvas id="scene" aria-label="二维有限元支架与载荷动画" role="img"></canvas>
+        <div class="legend"><span>材料状态</span><div class="gradient"></div><span>完好</span><span>损伤 / 失效</span></div>
+      </div>
+      <div class="runbar"><div class="buttons"><button id="run" class="primary">▶ 开始实验</button><button id="pause">Ⅱ 暂停</button><button id="step">▷ 单步</button><button id="reset">↺ 重置</button></div>
+        <label class="speed">播放倍率 <select id="play-speed"><option value="0.5">0.5×</option><option selected value="1">1×</option><option value="2">2×</option></select></label></div>
+      <div class="metrics">
+        <div><span>模拟时间</span><strong id="metric-time">0.000 <small>s</small></strong></div>
+        <div><span>当前踩踏力</span><strong id="metric-force">0 <small>N</small></strong></div>
+        <div><span>踏板端位移</span><strong id="metric-disp">0.00 <small>mm</small></strong></div>
+        <div><span>最大主拉应力</span><strong id="metric-stress">0.0 <small>MPa</small></strong></div>
+        <div><span>最大损伤 D</span><strong id="metric-damage">0.000</strong></div>
+        <div><span>删除单元</span><strong id="metric-failed">0 <small>/ 240</small></strong></div>
+      </div>
+      <div class="plot-area">
+        <div class="plot-top"><div><p class="eyebrow">RESPONSE HISTORY</p><h2>载荷与响应历程</h2></div><button id="csv" title="下载时序数据">↓ CSV 数据</button></div>
+        <canvas id="history" aria-label="载荷、位移与损伤时间曲线" role="img"></canvas>
+        <div class="plot-legend"><span><i class="key force"></i>施加力 (N)</span><span><i class="key disp"></i>位移 (mm)</span><span><i class="key damage"></i>最大损伤 D (0–1)</span></div>
+      </div>
+      <div class="notice" id="notice">演示性质的数值模型：采用小应变、线弹性平面应力CST有限元、隐式Newmark动力学与单元损伤删除。材料参数为假设值，不对应尊界或其他真实车辆。输入力是施加在简化支架端部的等效载荷。</div>
+    </section>
+    <aside class="controls">
+      <div class="controls-header"><p class="eyebrow">EXPERIMENT SETUP</p><h2>实验参数</h2><p>调节任意参数将重置模拟。</p></div>
+      <div class="field"><label for="preset">预设实验</label><select id="preset"><option value="fast1600">快速加载 · 1600 N</option><option value="slow1600">缓慢加载 · 1600 N</option><option value="slow3000">缓慢加载 · 3000 N</option><option value="custom">自定义</option></select></div>
+      <h3>载荷历史 <span>F(t)</span></h3>
+      <div class="field"><label for="peak">峰值作用力 <output id="peak-out">1600 N</output></label><input id="peak" type="range" min="200" max="3500" step="50" value="1600"></div>
+      <div class="field"><label for="rise">上升时间 <output id="rise-out">25 ms</output></label><input id="rise" type="range" min="10" max="2000" step="5" value="25"></div>
+      <div class="field"><label for="hold">峰值保持 <output id="hold-out">130 ms</output></label><input id="hold" type="range" min="20" max="600" step="10" value="130"></div>
+      <div class="field"><label for="gap">循环间隔 <output id="gap-out">160 ms</output></label><input id="gap" type="range" min="50" max="650" step="10" value="160"></div>
+      <div class="field"><label for="cycles">加载次数 <output id="cycles-out">3 次</output></label><input id="cycles" type="range" min="1" max="6" step="1" value="3"></div>
+      <h3>材料参数 <span>示意值</span></h3>
+      <div class="field"><label for="strength">损伤启动强度 <output id="strength-out">95 MPa</output></label><input id="strength" type="range" min="40" max="160" step="5" value="95"></div>
+      <div class="field"><label for="energy">等效断裂能 <output id="energy-out">20 kJ/m²</output></label><input id="energy" type="range" min="2" max="50" step="1" value="20"></div>
+      <div class="field"><label for="mass">端部等效惯性质量 <output id="mass-out">1.2 kg</output></label><input id="mass" type="range" min="0.2" max="4" step="0.2" value="1.2"></div>
+      <h3>可视化</h3>
+      <div class="field"><label for="exaggeration">变形显示倍率 <output id="exaggeration-out">4×</output></label><input id="exaggeration" type="range" min="1" max="10" step="1" value="4"></div>
+      <div class="formula">M · ü + C · u̇ + K(D) · u = F(t)<span>二维平面应力，三角形CST单元，Newmark-β + PCG求解</span></div>
+      <div class="hint"><strong>请注意：</strong>「缓慢加载」是力控斜坡示例，并非按20 mm/min位移控制的官方台架复现。模型含人工设置的薄弱截面与简化损伤律，用于比较物理机制，不得用于真实零件的安全鉴定。</div>
+    </aside>
+  </main>
+  <footer>SimDemos · FEM demonstrator · SI Units (N, m, s, Pa) · <a href="./README.md">说明文档</a></footer>
+</div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

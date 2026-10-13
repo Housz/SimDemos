@@ -10,6 +10,8 @@ just for fun :)
 [Learn Git — Visual Workflow](https://simdemos.housz.cn/LearnGit/)
 
 # Physics Demos
+[FEM · 制动踏板支架动力学与断裂模拟](./FEM/)
+
 [Single ball with gravity](./1.SingleBallwithGravity/index.html)
 
 [Dashboard](2.DashBoard/index.html)
